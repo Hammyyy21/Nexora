@@ -15,7 +15,7 @@ test('complete hardware exploration and local project workflow', async ({ page }
   await expect(page.locator('canvas')).toBeVisible();
   await expect(page.getByText('Assembling your workspace…')).toBeHidden();
   await page.waitForTimeout(1500);
-  await page.screenshot({ path: 'test-results/circuitforge-1440-assembly.png' });
+  await page.screenshot({ path: 'test-results/nexora-1440-assembly.png' });
   const canvas = page.locator('canvas');
   const b = (await canvas.boundingBox())!;
   await page.mouse.move(b.x + b.width * 0.6, b.y + b.height * 0.5);
@@ -53,7 +53,7 @@ test('complete hardware exploration and local project workflow', async ({ page }
       'true',
     );
     await page.waitForTimeout(1200);
-    await page.screenshot({ path: `test-results/circuitforge-${mode.toLowerCase()}.png` });
+    await page.screenshot({ path: `test-results/nexora-${mode.toLowerCase()}.png` });
   }
   await page.getByRole('navigation', { name: 'Main workspace navigation' }).getByRole('button', { name: 'Inspector', exact: true }).click();
   await expect(page.getByLabel('position X', { exact: true })).toHaveValue('-1.25');
@@ -86,7 +86,7 @@ test('complete hardware exploration and local project workflow', async ({ page }
     mimeType: 'application/json',
     buffer: Buffer.from('{"hello":"world"}'),
   });
-  await expect(page.getByText(/Use a CircuitForge Smart Cooling Controller project/)).toBeVisible();
+  await expect(page.getByText(/Invalid Nexora project/)).toBeVisible();
   await page.getByLabel('Import project file', { exact: true }).setInputFiles({
     name: 'valid.json',
     mimeType: 'application/json',
@@ -127,6 +127,6 @@ test('responsive workspace, preferences, keyboard, and reduced motion', async ({
     const bounds = (await page.locator('.viewport canvas').boundingBox())!;
     expect(bounds.width).toBeGreaterThan(300);
     expect(bounds.height).toBeGreaterThan(220);
-    await page.screenshot({ path: `test-results/circuitforge-${width}.png` });
+    await page.screenshot({ path: `test-results/nexora-${width}.png` });
   }
 });
