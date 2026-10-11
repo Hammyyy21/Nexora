@@ -7,7 +7,7 @@
 > response settings. See [Project Studio and AI design actions](docs/multi-project-ai-actions.md).
 > These are visual concept tools, not circuit simulation or verified engineering.
 
-# CircuitForge
+# Nexora
 
 A browser-local, interactive 3D hardware design studio. The bundled **Smart Cooling Controller** includes a procedural PCB, 14 selectable objects, editable properties, four viewing modes, a deterministic Demo Assistant, an integrated Firmware Explorer, and a Components workspace with 29 curated hardware records.
 
@@ -69,7 +69,7 @@ Shortcuts are disabled while editing an input. Both Select and Orbit support lef
 
 ## Project files and scope
 
-A local save is explicit and uses the legacy `nexora.project.v1` localStorage key so existing saves survive the CircuitForge rename. Reload starts the bundled demonstration; **Load local save** restores saved edits. Export JSON for a portable copy. Import accepts schema versions 1 and 2, preserves the demo's 14 required IDs, and supports up to 64 total objects with validated catalog identities. Editable transforms, appearance, visibility, and project name are validated. Bundled geometry and metadata remain authoritative. Files larger than 250 KB, invalid colors, duplicate IDs, missing fields, and out-of-bounds transforms are rejected.
+A local save is explicit and uses the legacy `nexora.project.v1` localStorage key so existing saves survive the Nexora rebrand. Reload starts the bundled demonstration; **Load local save** restores saved edits. Export JSON for a portable copy. Import accepts schema versions 1 and 2, preserves the demo's 14 required IDs, and supports up to 64 total objects with validated catalog identities. Editable transforms, appearance, visibility, and project name are validated. Bundled geometry and metadata remain authoritative. Files larger than 250 KB, invalid colors, duplicate IDs, missing fields, and out-of-bounds transforms are rejected.
 
 Undo/redo covers component additions, visual replacements, firmware-target changes, edits, visibility, imports, loads, reset, and Show all. Selection is included in project saves; view modes, camera motion and display preferences are transient. The 50-entry undo history is not saved.
 
