@@ -219,7 +219,7 @@ export function HardwareBoard() {
       ))}
       {!blank && (
         <>
-          <PrintedText text="CIRCUITFORGE" position={[1.7, 0.09, 2.68]} width={1.7} />
+          <PrintedText text="NEXORA" position={[1.7, 0.09, 2.68]} width={1.7} />
           <PrintedText text="SMART COOLING  /  REV 01" position={[1.55, 0.09, 2.91]} width={2.2} />
           <PrintedText text="USB-C" position={[-3.72, 0.09, 1.6]} width={0.7} />
           <PrintedText text="12V   GND" position={[-2.8, 0.09, 1.98]} width={0.92} />
