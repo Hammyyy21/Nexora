@@ -2,7 +2,7 @@ import { useWorkspaceStore } from '../store/useWorkspaceStore';
 import { create } from 'zustand';
 import { demoSource, type FirmwareLanguage } from './model';
 
-// Retain the legacy storage key so existing saves survive the CircuitForge rename.
+// Retain the legacy storage key so existing saves survive the Nexora rebrand.
 export const FIRMWARE_KEY = 'nexora.firmware.v1';
 export const MIN_PANEL_HEIGHT = 230;
 export const MAX_PANEL_HEIGHT = 680;
