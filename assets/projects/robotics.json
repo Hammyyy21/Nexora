@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 2,
+  "id": "demo-robotics",
+  "name": "Robotics Motor Controller",
+  "placementMode": "free",
+  "boardTemplateId": "robotics",
+  "components": [
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#14685e",
+      "material": "polymer",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        0,
+        0
+      ],
+      "purpose": "Mechanical foundation for the controller. Concept dimensions: 92 × 64 mm.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "pcb",
+      "name": "Main PCB",
+      "reference": "PCB1",
+      "type": "board",
+      "group": "structure",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        12,
+        0.16,
+        9
+      ],
+      "description": "Two-layer FR-4 board with solder mask, copper routing, plated pads, and four mounting holes.",
+      "fixed": true
+    },
+    {
+      "id": "part-30f70ba5-b73f-4649-a8d1-0afa71e09ffb",
+      "catalogId": "atmega328p",
+      "integration": "visual-only",
+      "initialPosition": [
+        -1.2,
+        1.5,
+        0
+      ],
+      "name": "ATmega328P",
+      "reference": "LIB-30F70B",
+      "type": "microcontroller",
+      "group": "active",
+      "description": "An 8-bit microcontroller used in the classic Uno.",
+      "purpose": "Simple embedded control and learning C. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        -1.295,
+        0.24,
+        -1.38
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        1.2,
+        0.24,
+        1.2
+      ],
+      "color": "#34445c",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    {
+      "id": "part-60079a9a-da0f-4bf5-b3cc-1c8b18a64b20",
+      "catalogId": "drv8833",
+      "integration": "visual-only",
+      "initialPosition": [
+        1.2,
+        1.5,
+        0
+      ],
+      "name": "DRV8833 motor driver",
+      "reference": "LIB-60079A",
+      "type": "catalog",
+      "group": "active",
+      "description": "A dual H-bridge IC for controlling motor direction.",
+      "purpose": "Small brushed motors or a stepper motor. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        0.66,
+        0.295,
+        0.9575
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        1,
+        0.35,
+        0.9
+      ],
+      "color": "#34445c",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "wire-091b9669-45df-4824-b376-0de9c308edee",
+      "from": {
+        "componentId": "part-30f70ba5-b73f-4649-a8d1-0afa71e09ffb",
+        "portId": "demo:VDD"
+      },
+      "to": {
+        "componentId": "part-60079a9a-da0f-4bf5-b3cc-1c8b18a64b20",
+        "portId": "demo:VDD"
+      }
+    },
+    {
+      "id": "wire-97025d12-f536-4504-a2e8-64dbe588cb6b",
+      "from": {
+        "componentId": "part-30f70ba5-b73f-4649-a8d1-0afa71e09ffb",
+        "portId": "demo:GND"
+      },
+      "to": {
+        "componentId": "part-60079a9a-da0f-4bf5-b3cc-1c8b18a64b20",
+        "portId": "demo:GND"
+      }
+    },
+    {
+      "id": "wire-b5162ea2-dd5d-4230-9109-d261d8901f48",
+      "from": {
+        "componentId": "part-30f70ba5-b73f-4649-a8d1-0afa71e09ffb",
+        "portId": "demo:PWM"
+      },
+      "to": {
+        "componentId": "part-60079a9a-da0f-4bf5-b3cc-1c8b18a64b20",
+        "portId": "demo:PWM"
+      }
+    },
+    {
+      "id": "wire-982aec61-99a9-491c-8c77-f7c2e63389f8",
+      "from": {
+        "componentId": "part-30f70ba5-b73f-4649-a8d1-0afa71e09ffb",
+        "portId": "demo:GPIO"
+      },
+      "to": {
+        "componentId": "part-60079a9a-da0f-4bf5-b3cc-1c8b18a64b20",
+        "portId": "demo:GPIO"
+      }
+    }
+  ],
+  "boardConfiguration": {
+    "length": 120,
+    "width": 90,
+    "thickness": 1.6,
+    "layers": 4,
+    "material": "FR-4 (example)",
+    "supplyVoltage": 5,
+    "currentBudgetMa": 2000,
+    "componentSpacing": 2,
+    "edgeClearance": 2,
+    "mountingHoles": [
+      {
+        "x": -55,
+        "z": -40,
+        "diameter": 3
+      },
+      {
+        "x": -55,
+        "z": 40,
+        "diameter": 3
+      },
+      {
+        "x": 55,
+        "z": -40,
+        "diameter": 3
+      },
+      {
+        "x": 55,
+        "z": 40,
+        "diameter": 3
+      }
+    ],
+    "restrictedRegions": []
+  },
+  "engineeringInputs": {
+    "part-30f70ba5-b73f-4649-a8d1-0afa71e09ffb": {
+      "provenance": "demo",
+      "currentMa": 40,
+      "voltage": 5
+    },
+    "part-60079a9a-da0f-4bf5-b3cc-1c8b18a64b20": {
+      "provenance": "demo",
+      "currentMa": 2300,
+      "voltage": 5
+    }
+  }
+}

@@ -1,0 +1,159 @@
+.board-specifications {
+  min-width: 0;
+  /* Align every heading and specification label with the Inspector toolbar.
+     The old ancestor-wide padding left the nested dimension rows misaligned. */
+  padding: 12px 16px 18px;
+  font-size: 12px;
+}
+.board-specifications h3 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.board-specifications h4 {
+  color: #cfdbec;
+  font-size: 12px;
+  margin: 16px 0 8px;
+}
+.board-specifications p,
+.board-configuration p {
+  color: #93a6c0;
+  line-height: 1.6;
+  font-size: 11px;
+}
+.board-specifications dl {
+  margin: 0;
+}
+.board-specifications .board-spec-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #263448;
+}
+.board-spec-row dt {
+  color: #a4b4c9;
+}
+.board-spec-row dd {
+  margin: 0;
+  color: #e0e9f5;
+  overflow-wrap: anywhere;
+}
+.board-spec-row small {
+  display: block;
+  color: #90a2ba;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.board-specifications a {
+  color: #9cbfff;
+  font-size: 11px;
+}
+.board-specifications .board-dimensions {
+  /* Extend the highlight behind the content without indenting its labels.
+     Negative margins and matching padding preserve the common 16px gutter. */
+  margin-left: -8px;
+  margin-right: -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: #162236;
+  border-radius: 6px;
+}
+.board-dimensions dd > span {
+  font-weight: 600;
+  font-size: 14px;
+}
+.board-specifications details,
+.board-configuration {
+  margin-top: 8px;
+  border: 1px solid #29384c;
+  border-radius: 6px;
+  padding: 10px;
+}
+.board-specifications summary,
+.board-configuration summary {
+  cursor: pointer;
+  color: #c5d4e8;
+  font-size: 12px;
+}
+.board-specifications summary:focus-visible,
+.board-configuration summary:focus-visible {
+  outline: 2px solid #7caeff;
+  outline-offset: 4px;
+}
+.board-configuration label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 10px 0;
+  min-width: 0;
+  font-size: 11px;
+  color: #b6c7de;
+}
+.board-configuration input,
+.board-comparison select {
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  background: #101b2b;
+  border: 1px solid #33455f;
+  border-radius: 4px;
+  color: #dce8f8;
+}
+.board-configuration fieldset {
+  min-width: 0;
+  border: 1px solid #29384c;
+  margin: 12px 0;
+  padding: 8px;
+}
+.board-hole-editor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.board-hole-editor label {
+  flex: 1;
+}
+.board-comparison {
+  margin: 16px 0;
+}
+.board-comparison > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.board-comparison label {
+  min-width: 0;
+  color: #b6c7de;
+  font-size: 12px;
+}
+.board-comparison-scroll {
+  overflow: auto;
+  margin-top: 12px;
+}
+.board-comparison table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.board-comparison th,
+.board-comparison td {
+  text-align: left;
+  padding: 10px 8px;
+  vertical-align: top;
+  border-bottom: 1px solid #29384c;
+  min-width: 105px;
+}
+.board-comparison small {
+  display: block;
+  color: #8fa4bf;
+  margin-top: 4px;
+}
+
+/* Keep editable board configuration aligned with the specification content. */
+.tools-panel .inspector .board-configuration {
+  margin-inline: 16px;
+}
+@media (max-width: 600px) {
+  .board-specifications { padding-inline: 12px; }
+  .tools-panel .inspector .board-configuration { margin-inline: 12px; }
+}

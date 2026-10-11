@@ -1,0 +1,24 @@
+{
+  "id": "cooling-cortex-m3-demo-v1",
+  "targetArchitecture": "ARM Cortex-M3 \u00b7 Thumb-2 \u00b7 little endian",
+  "compiler": "Apple clang version 16.0.0 (clang-1600.0.26.6)",
+  "compilerFlags": [
+    "--target=arm-none-eabi",
+    "-mcpu=cortex-m3",
+    "-mthumb",
+    "-O2",
+    "-ffreestanding",
+    "-fno-builtin"
+  ],
+  "sourceRevision": "fnv1a-41c5eb10",
+  "sourceSha256": "6c8da76e0a8cf2d62e594e1c3254788102234f3d6f6417c9efe27ab588510ed9",
+  "status": "demo",
+  "assembly": "\t.text\n\t.syntax unified\n\t.eabi_attribute\t67, \"2.09\"\t@ Tag_conformance\n\t.cpu\tcortex-m3\n\t.eabi_attribute\t6, 10\t@ Tag_CPU_arch\n\t.eabi_attribute\t7, 77\t@ Tag_CPU_arch_profile\n\t.eabi_attribute\t8, 0\t@ Tag_ARM_ISA_use\n\t.eabi_attribute\t9, 2\t@ Tag_THUMB_ISA_use\n\t.eabi_attribute\t34, 0\t@ Tag_CPU_unaligned_access\n\t.eabi_attribute\t17, 1\t@ Tag_ABI_PCS_GOT_use\n\t.eabi_attribute\t20, 1\t@ Tag_ABI_FP_denormal\n\t.eabi_attribute\t21, 0\t@ Tag_ABI_FP_exceptions\n\t.eabi_attribute\t23, 3\t@ Tag_ABI_FP_number_model\n\t.eabi_attribute\t24, 1\t@ Tag_ABI_align_needed\n\t.eabi_attribute\t25, 1\t@ Tag_ABI_align_preserved\n\t.eabi_attribute\t38, 1\t@ Tag_ABI_FP_16bit_format\n\t.eabi_attribute\t18, 4\t@ Tag_ABI_PCS_wchar_t\n\t.eabi_attribute\t26, 2\t@ Tag_ABI_enum_size\n\t.eabi_attribute\t14, 0\t@ Tag_ABI_PCS_R9_use\n\t.file\t\"cooling.c\"\n\t.globl\tsensor_read_celsius             @ -- Begin function sensor_read_celsius\n\t.p2align\t1\n\t.type\tsensor_read_celsius,%function\n\t.code\t16                              @ @sensor_read_celsius\n\t.thumb_func\nsensor_read_celsius:\n\t.fnstart\n@ %bb.0:\n\tldr\tr0, [r0]\n\tbx\tlr\n.Lfunc_end0:\n\t.size\tsensor_read_celsius, .Lfunc_end0-sensor_read_celsius\n\t.cantunwind\n\t.fnend\n                                        @ -- End function\n\t.globl\tfan_set_duty                    @ -- Begin function fan_set_duty\n\t.p2align\t1\n\t.type\tfan_set_duty,%function\n\t.code\t16                              @ @fan_set_duty\n\t.thumb_func\nfan_set_duty:\n\t.fnstart\n@ %bb.0:\n\tstr\tr1, [r0]\n\tbx\tlr\n.Lfunc_end1:\n\t.size\tfan_set_duty, .Lfunc_end1-fan_set_duty\n\t.cantunwind\n\t.fnend\n                                        @ -- End function\n\t.globl\tupdate_fan                      @ -- Begin function update_fan\n\t.p2align\t1\n\t.type\tupdate_fan,%function\n\t.code\t16                              @ @update_fan\n\t.thumb_func\nupdate_fan:\n\t.fnstart\n@ %bb.0:\n\tldr\tr0, [r0]\n\tmovs\tr2, #0\n\tcmp\tr0, #30\n\tit\tgt\n\tmovgt\tr2, #100\n\tstr\tr2, [r1]\n\tbx\tlr\n.Lfunc_end2:\n\t.size\tupdate_fan, .Lfunc_end2-update_fan\n\t.cantunwind\n\t.fnend\n                                        @ -- End function\n\t.ident\t\"Apple clang version 16.0.0 (clang-1600.0.26.6)\"\n\t.section\t\".note.GNU-stack\",\"\",%progbits\n\t.addrsig\n\t.eabi_attribute\t30, 1\t@ Tag_ABI_optimization_goals\n",
+  "disassembly": "Disassembly of section .text:\n\n00000000 <sensor_read_celsius>:\n       0: 6800         \tldr\tr0, [r0]\n       2: 4770         \tbx\tlr\n\n00000004 <fan_set_duty>:\n       4: 6001         \tstr\tr1, [r0]\n       6: 4770         \tbx\tlr\n\n00000008 <update_fan>:\n       8: 6800         \tldr\tr0, [r0]\n       a: 2200         \tmovs\tr2, #0x0\n       c: 281e         \tcmp\tr0, #0x1e\n       e: bfc8         \tit\tgt\n      10: 2264         \tmovgt\tr2, #0x64\n      12: 600a         \tstr\tr2, [r1]\n      14: 4770         \tbx\tlr\n",
+  "machineCode": [
+    0, 104, 112, 71, 1, 96, 112, 71, 0, 104, 0, 34, 30, 40, 200, 191, 100, 34, 10, 96, 112, 71
+  ],
+  "machineSha256": "23e76040c5ecae52482c2088116570d982be0415169c6eb703649d38e450f2ec",
+  "addressKind": "section-offset",
+  "section": ".text"
+}

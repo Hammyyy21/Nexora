@@ -1,0 +1,655 @@
+{
+  "schemaVersion": 2,
+  "id": "demo-cooling",
+  "name": "Smart Cooling Controller",
+  "components": [
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#14685e",
+      "material": "polymer",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        0,
+        0
+      ],
+      "purpose": "Mechanical foundation for the controller. Concept dimensions: 92 × 64 mm.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "pcb",
+      "name": "Main PCB",
+      "reference": "PCB1",
+      "type": "board",
+      "group": "structure",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        9.2,
+        0.16,
+        6.4
+      ],
+      "description": "Two-layer FR-4 board with solder mask, copper routing, plated pads, and four mounting holes."
+    },
+    {
+      "id": "mcu",
+      "catalogId": "rp2040",
+      "integration": "visual-only",
+      "initialPosition": [
+        6,
+        1,
+        0
+      ],
+      "name": "RP2040",
+      "reference": "U1",
+      "type": "microcontroller",
+      "group": "active",
+      "description": "A dual-core microcontroller for programmable input and output.",
+      "purpose": "Small controllers and custom input devices. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        -1.25,
+        0.29,
+        -0.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        1.2,
+        0.24,
+        1.2
+      ],
+      "color": "#34445c",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    {
+      "id": "sensor",
+      "catalogId": "tmp102",
+      "integration": "visual-only",
+      "initialPosition": [
+        6,
+        1,
+        0
+      ],
+      "name": "TMP102 temperature sensor",
+      "reference": "U3",
+      "type": "sensor",
+      "group": "active",
+      "description": "A digital sensor that reports its local temperature.",
+      "purpose": "Monitoring a board or ambient environment. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        -3,
+        0.25,
+        -1.9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        0.8,
+        0.25,
+        0.7
+      ],
+      "color": "#34445c",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    {
+      "id": "mosfet",
+      "catalogId": "irlz44n",
+      "integration": "visual-only",
+      "initialPosition": [
+        6,
+        1,
+        0
+      ],
+      "name": "IRLZ44NPbF MOSFET",
+      "reference": "Q1",
+      "type": "mosfet",
+      "group": "active",
+      "description": "A transistor for switching a load with a gate-control signal.",
+      "purpose": "Power stages for loads such as fans. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        0.65,
+        0.3,
+        1.1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        1,
+        0.35,
+        0.9
+      ],
+      "color": "#34445c",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#333b48",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0.4,
+        3,
+        0.1
+      ],
+      "purpose": "Provides the cooling output in this design concept.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "fan",
+      "name": "Cooling Fan",
+      "reference": "FAN1",
+      "type": "fan",
+      "group": "active",
+      "position": [
+        2.5,
+        0.7,
+        -0.6
+      ],
+      "dimensions": [
+        3.1,
+        1.05,
+        3.1
+      ],
+      "description": "30 mm axial cooling fan with a seven-blade rotor, mounting frame, and central hub."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#b6c2ce",
+      "material": "metal",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        -0.55,
+        1.2,
+        0
+      ],
+      "purpose": "Concept programming and auxiliary power interface.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "usb",
+      "name": "USB-C Port",
+      "reference": "J1",
+      "type": "usb",
+      "group": "connectors",
+      "position": [
+        -4.2,
+        0.33,
+        0.8
+      ],
+      "dimensions": [
+        0.8,
+        0.5,
+        1.05
+      ],
+      "description": "Shielded USB-C connector with metallic housing and an internal contact tongue."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#3076aa",
+      "material": "polymer",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        -0.15,
+        1.4,
+        0.5
+      ],
+      "purpose": "Concept external power connection.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "power",
+      "name": "Power Terminal",
+      "reference": "J2",
+      "type": "terminal",
+      "group": "connectors",
+      "position": [
+        -2.9,
+        0.45,
+        2.55
+      ],
+      "dimensions": [
+        1.25,
+        0.7,
+        0.7
+      ],
+      "description": "Two-position screw terminal with recessed fasteners and cable entries."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#252c36",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.2,
+        -0.4
+      ],
+      "purpose": "Concept debug and expansion connector.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "header",
+      "name": "Debug Header",
+      "reference": "J3",
+      "type": "header",
+      "group": "connectors",
+      "position": [
+        -0.3,
+        0.35,
+        -2.6
+      ],
+      "dimensions": [
+        1.8,
+        0.45,
+        0.45
+      ],
+      "description": "Six-pin gold-plated header on a molded insulating carrier."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#252c36",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        -0.3,
+        0.85,
+        0
+      ],
+      "purpose": "Illustrative bias component; value is a design placeholder.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "r1",
+      "name": "Resistor R1",
+      "reference": "R1",
+      "type": "resistor",
+      "group": "passives",
+      "position": [
+        -2.8,
+        0.22,
+        -0.65
+      ],
+      "dimensions": [
+        0.48,
+        0.15,
+        0.23
+      ],
+      "description": "0603-style surface-mount resistor with metallized end caps."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#252c36",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        -0.3,
+        1.15,
+        0
+      ],
+      "purpose": "Illustrative pull-up component; value is a design placeholder.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "r2",
+      "name": "Resistor R2",
+      "reference": "R2",
+      "type": "resistor",
+      "group": "passives",
+      "position": [
+        -2.8,
+        0.22,
+        0
+      ],
+      "dimensions": [
+        0.48,
+        0.15,
+        0.23
+      ],
+      "description": "0603-style surface-mount resistor with metallized end caps."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#252c36",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0.25,
+        0.85,
+        0
+      ],
+      "purpose": "Illustrative gate resistor; value is a design placeholder.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "r3",
+      "name": "Resistor R3",
+      "reference": "R3",
+      "type": "resistor",
+      "group": "passives",
+      "position": [
+        0.2,
+        0.22,
+        0.25
+      ],
+      "dimensions": [
+        0.48,
+        0.15,
+        0.23
+      ],
+      "description": "Surface-mount resistor adjacent to the switching stage."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#434f5b",
+      "material": "metal",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.2,
+        0.25
+      ],
+      "purpose": "Represents bulk supply decoupling.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "c1",
+      "name": "Capacitor C1",
+      "reference": "C1",
+      "type": "capacitor",
+      "group": "passives",
+      "position": [
+        -1.25,
+        0.55,
+        1.8
+      ],
+      "dimensions": [
+        0.6,
+        0.9,
+        0.6
+      ],
+      "description": "Radial aluminum electrolytic capacitor with a scored pressure vent."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#434f5b",
+      "material": "metal",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.65,
+        0.45
+      ],
+      "purpose": "Represents local power filtering.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "c2",
+      "name": "Capacitor C2",
+      "reference": "C2",
+      "type": "capacitor",
+      "group": "passives",
+      "position": [
+        -0.35,
+        0.45,
+        1.95
+      ],
+      "dimensions": [
+        0.45,
+        0.7,
+        0.45
+      ],
+      "description": "Small radial electrolytic capacitor beside the power stage."
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#74849c",
+      "material": "polymer",
+      "opacity": 0.32,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        -0.65,
+        0
+      ],
+      "purpose": "Switch to X-ray to inspect the lower board and components through the housing.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "housing",
+      "name": "Protective Housing",
+      "reference": "ENC1",
+      "type": "housing",
+      "group": "structure",
+      "position": [
+        0,
+        -0.22,
+        0
+      ],
+      "dimensions": [
+        9.65,
+        0.55,
+        6.85
+      ],
+      "description": "Smoked protective tray with side walls, standoffs, and a service cover over the power stage."
+    }
+  ],
+  "connections": [
+    {
+      "id": "wire-00d02173-1b72-4768-9637-3b2e3126c987",
+      "from": {
+        "componentId": "mcu",
+        "portId": "demo:SDA"
+      },
+      "to": {
+        "componentId": "sensor",
+        "portId": "demo:SDA"
+      }
+    },
+    {
+      "id": "wire-9d7e818e-811d-4b03-9468-6f959031bd7f",
+      "from": {
+        "componentId": "mcu",
+        "portId": "demo:SCL"
+      },
+      "to": {
+        "componentId": "sensor",
+        "portId": "demo:SCL"
+      }
+    },
+    {
+      "id": "wire-27ea7b0f-2d52-4528-b3e0-f86852f55a4d",
+      "from": {
+        "componentId": "mcu",
+        "portId": "demo:PWM"
+      },
+      "to": {
+        "componentId": "mosfet",
+        "portId": "demo:PWM"
+      }
+    },
+    {
+      "id": "wire-d7856d84-0348-4306-9c88-69178b394942",
+      "from": {
+        "componentId": "mcu",
+        "portId": "demo:GND"
+      },
+      "to": {
+        "componentId": "sensor",
+        "portId": "demo:GND"
+      }
+    },
+    {
+      "id": "wire-3e8b2367-4db6-4d1f-b5b9-1b1412a85e1e",
+      "from": {
+        "componentId": "mcu",
+        "portId": "demo:VDD"
+      },
+      "to": {
+        "componentId": "sensor",
+        "portId": "demo:VDD"
+      }
+    },
+    {
+      "id": "wire-100b06fe-b3d5-49b2-bf64-5e6ceda27458",
+      "from": {
+        "componentId": "mosfet",
+        "portId": "D"
+      },
+      "to": {
+        "componentId": "fan",
+        "portId": "-"
+      }
+    },
+    {
+      "id": "wire-a200046e-a3f8-40a4-bf07-439691eb593f",
+      "from": {
+        "componentId": "usb",
+        "portId": "VBUS"
+      },
+      "to": {
+        "componentId": "fan",
+        "portId": "+"
+      }
+    },
+    {
+      "id": "wire-acab6db8-45ce-4775-a306-a0c0bb2a2044",
+      "from": {
+        "componentId": "usb",
+        "portId": "GND"
+      },
+      "to": {
+        "componentId": "mcu",
+        "portId": "demo:GND"
+      }
+    }
+  ],
+  "engineeringInputs": {
+    "mcu": {
+      "provenance": "demo",
+      "currentMa": 40,
+      "voltage": 5
+    },
+    "sensor": {
+      "provenance": "demo",
+      "currentMa": 2,
+      "voltage": 5
+    },
+    "mosfet": {
+      "provenance": "demo",
+      "currentMa": 1,
+      "voltage": 5,
+      "dissipationW": 0.25,
+      "thermalResistance": 40,
+      "ambientC": 25,
+      "maxTemperatureC": 80
+    },
+    "fan": {
+      "provenance": "demo",
+      "currentMa": 180,
+      "voltage": 5
+    }
+  },
+  "boardConfiguration": {
+    "length": 92,
+    "width": 64,
+    "thickness": 1.6,
+    "layers": 2,
+    "material": "FR-4 (example)",
+    "supplyVoltage": 5,
+    "currentBudgetMa": 500,
+    "componentSpacing": 2,
+    "edgeClearance": 2,
+    "mountingHoles": [
+      {
+        "x": -41,
+        "z": -27,
+        "diameter": 3
+      },
+      {
+        "x": -41,
+        "z": 27,
+        "diameter": 3
+      },
+      {
+        "x": 41,
+        "z": -27,
+        "diameter": 3
+      },
+      {
+        "x": 41,
+        "z": 27,
+        "diameter": 3
+      }
+    ],
+    "restrictedRegions": []
+  },
+  "boardTemplateId": "standard"
+}

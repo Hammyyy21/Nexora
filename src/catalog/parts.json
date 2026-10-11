@@ -1,0 +1,1611 @@
+[
+  {
+    "id": "rp2040",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "RP2040",
+    "name": "RP2040",
+    "category": "processors",
+    "subcategory": "Microcontrollers",
+    "kind": "device",
+    "description": "A dual-core microcontroller for programmable input and output.",
+    "useCase": "Small controllers and custom input devices.",
+    "caution": "External flash, power supplies and a board-specific port are required.",
+    "specifications": {
+      "clock": {
+        "label": "Maximum clock",
+        "value": 133,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+        "unit": "MHz"
+      },
+      "sram": {
+        "label": "On-chip SRAM",
+        "value": 264,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+        "unit": "kB"
+      }
+    },
+    "interfaces": [
+      "SPI",
+      "I²C",
+      "UART",
+      "USB"
+    ],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-M0+"
+  },
+  {
+    "id": "rp2350",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "RP2350",
+    "name": "RP2350 family",
+    "category": "processors",
+    "subcategory": "Microcontrollers",
+    "kind": "family",
+    "description": "A microcontroller family with Arm and RISC-V processor choices.",
+    "useCase": "Control projects needing more working memory.",
+    "caution": "Select a package and instruction-set configuration before integration.",
+    "specifications": {
+      "clock": {
+        "label": "Maximum clock",
+        "value": 150,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+        "unit": "MHz"
+      },
+      "sram": {
+        "label": "On-chip SRAM",
+        "value": 520,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+        "unit": "kB"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/documentation/microcontrollers/microcontroller-chips.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": false,
+    "insertionNote": "Catalog and comparison only: this family or desktop platform has no supported integration path in the cooling project.",
+    "architecture": "ARM Cortex-M33 / RISC-V"
+  },
+  {
+    "id": "atmega328p",
+    "manufacturer": "Microchip",
+    "manufacturerPartNumber": "ATmega328P",
+    "name": "ATmega328P",
+    "category": "processors",
+    "subcategory": "Microcontrollers",
+    "kind": "device",
+    "description": "An 8-bit microcontroller used in the classic Uno.",
+    "useCase": "Simple embedded control and learning C.",
+    "caution": "Clock, supply and package limits depend on the selected ordering variant.",
+    "specifications": {
+      "architecture": {
+        "label": "Processor",
+        "value": "8-bit AVR",
+        "source": "https://www.microchip.com/en-us/product/atmega328p"
+      }
+    },
+    "interfaces": [
+      "SPI",
+      "I²C",
+      "UART"
+    ],
+    "sources": [
+      {
+        "url": "https://www.microchip.com/en-us/product/atmega328p",
+        "title": "Microchip manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.microchip.com/en-us/product/atmega328p",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "AVR"
+  },
+  {
+    "id": "stm32f103c8",
+    "manufacturer": "STMicroelectronics",
+    "manufacturerPartNumber": "STM32F103C8",
+    "name": "STM32F103C8",
+    "category": "processors",
+    "subcategory": "Microcontrollers",
+    "kind": "device",
+    "description": "A Cortex-M3 device for embedded control.",
+    "useCase": "Sensor acquisition and motor-control prototypes.",
+    "caution": "A shared CPU architecture does not establish footprint or pin compatibility.",
+    "specifications": {
+      "clock": {
+        "label": "Maximum clock",
+        "value": 72,
+        "source": "https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html",
+        "unit": "MHz"
+      },
+      "architecture": {
+        "label": "Core",
+        "value": "ARM Cortex-M3",
+        "source": "https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html",
+        "title": "STMicroelectronics manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-M3"
+  },
+  {
+    "id": "stm32f401cc",
+    "manufacturer": "STMicroelectronics",
+    "manufacturerPartNumber": "STM32F401CC",
+    "name": "STM32F401CC",
+    "category": "processors",
+    "subcategory": "Microcontrollers",
+    "kind": "device",
+    "description": "A Cortex-M4 controller with DSP and floating-point support.",
+    "useCase": "Embedded signal processing and control.",
+    "caution": "Rebuild firmware for the exact target and review clocks and pin assignments.",
+    "specifications": {
+      "clock": {
+        "label": "Maximum clock",
+        "value": 84,
+        "source": "https://www.st.com/en/microcontrollers-microprocessors/stm32f401cc.html",
+        "unit": "MHz"
+      },
+      "architecture": {
+        "label": "Core",
+        "value": "ARM Cortex-M4",
+        "source": "https://www.st.com/en/microcontrollers-microprocessors/stm32f401cc.html"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.st.com/en/microcontrollers-microprocessors/stm32f401cc.html",
+        "title": "STMicroelectronics manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.st.com/en/microcontrollers-microprocessors/stm32f401cc.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-M4"
+  },
+  {
+    "id": "pico",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "Pico",
+    "name": "Raspberry Pi Pico",
+    "category": "boards",
+    "subcategory": "Development boards",
+    "kind": "product",
+    "description": "A compact development board built around RP2040.",
+    "useCase": "Breadboard experiments and controller prototypes.",
+    "caution": "Board input power and GPIO voltage limits are different; review the board documentation.",
+    "specifications": {
+      "clock": {
+        "label": "Maximum clock",
+        "value": 133,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "unit": "MHz"
+      },
+      "sram": {
+        "label": "SRAM",
+        "value": 264,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "unit": "kB"
+      },
+      "flash": {
+        "label": "On-board flash",
+        "value": 2,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "unit": "MB"
+      }
+    },
+    "interfaces": [
+      "USB",
+      "SPI",
+      "I²C",
+      "UART"
+    ],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-M0+",
+    "physicalPinout": {
+      "package": "Raspberry Pi Pico Rev3 40-pin header",
+      "source": "https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf",
+      "sourceSection": "§2.1 / board pinout",
+      "pins": [
+        {
+          "id": "GP0",
+          "number": "1",
+          "role": "bidirectional",
+          "interface": "I2C0",
+          "function": "SDA",
+          "drive": "push-pull",
+          "logicVoltage": 3.3
+        },
+        {
+          "id": "GP1",
+          "number": "2",
+          "role": "bidirectional",
+          "interface": "I2C0",
+          "function": "SCL",
+          "drive": "push-pull",
+          "logicVoltage": 3.3
+        },
+        {
+          "id": "GND_3",
+          "number": "3",
+          "role": "ground"
+        },
+        {
+          "id": "GP20",
+          "number": "26",
+          "role": "bidirectional",
+          "interface": "I2C0",
+          "function": "SDA",
+          "drive": "push-pull",
+          "logicVoltage": 3.3
+        },
+        {
+          "id": "GP21",
+          "number": "27",
+          "role": "bidirectional",
+          "interface": "I2C0",
+          "function": "SCL",
+          "drive": "push-pull",
+          "logicVoltage": 3.3
+        },
+        {
+          "id": "3V3_OUT",
+          "number": "36",
+          "role": "power-output",
+          "nominalVoltage": 3.3
+        },
+        {
+          "id": "VSYS",
+          "number": "39",
+          "role": "power-input",
+          "supplyRange": [
+            1.8,
+            5.5
+          ]
+        }
+      ]
+    },
+    "datasheetUrl": "https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf"
+  },
+  {
+    "id": "pico2",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "Pico 2",
+    "name": "Raspberry Pi Pico 2",
+    "category": "boards",
+    "subcategory": "Development boards",
+    "kind": "product",
+    "description": "A compact development board built around RP2350.",
+    "useCase": "Breadboard experiments and controller prototypes.",
+    "caution": "Board input power and GPIO voltage limits are different; review the board documentation.",
+    "specifications": {
+      "clock": {
+        "label": "Maximum clock",
+        "value": 150,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "unit": "MHz"
+      },
+      "sram": {
+        "label": "SRAM",
+        "value": 520,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "unit": "kB"
+      },
+      "flash": {
+        "label": "On-board flash",
+        "value": 4,
+        "source": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "unit": "MB"
+      }
+    },
+    "interfaces": [
+      "USB",
+      "SPI",
+      "I²C",
+      "UART"
+    ],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-M33 / RISC-V"
+  },
+  {
+    "id": "pi5",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "Raspberry Pi 5 4GB",
+    "name": "Raspberry Pi 5 · 4GB",
+    "category": "boards",
+    "subcategory": "Single-board computers",
+    "kind": "product",
+    "description": "A complete Linux-capable computer on one board.",
+    "useCase": "A local dashboard or higher-level controller.",
+    "caution": "Cooling and adequate USB-C power are required; this is not a drop-in MCU.",
+    "specifications": {
+      "clock": {
+        "label": "CPU clock",
+        "value": 2.4,
+        "source": "https://www.raspberrypi.com/products/raspberry-pi-5/",
+        "unit": "GHz"
+      },
+      "memory": {
+        "label": "Installed memory",
+        "value": 4,
+        "source": "https://www.raspberrypi.com/products/raspberry-pi-5/",
+        "unit": "GB"
+      },
+      "input": {
+        "label": "Recommended supply",
+        "value": "5 V / 5 A via USB-C",
+        "source": "https://www.raspberrypi.com/products/raspberry-pi-5/"
+      }
+    },
+    "interfaces": [
+      "USB",
+      "Ethernet",
+      "PCIe",
+      "microSD"
+    ],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/products/raspberry-pi-5/",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/products/raspberry-pi-5/",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-A76",
+    "memoryGeneration": "LPDDR4X"
+  },
+  {
+    "id": "cm4",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "Compute Module 4",
+    "name": "Compute Module 4 family",
+    "category": "boards",
+    "subcategory": "Computing modules",
+    "kind": "family",
+    "description": "A computing module intended for a custom carrier board.",
+    "useCase": "Embedded products needing a Linux computer.",
+    "caution": "RAM, eMMC and wireless options vary; choose an exact variant and carrier.",
+    "specifications": {
+      "clock": {
+        "label": "CPU clock",
+        "value": 1.5,
+        "source": "https://www.raspberrypi.com/products/compute-module-4/",
+        "unit": "GHz"
+      },
+      "memory": {
+        "label": "Memory type",
+        "value": "LPDDR4",
+        "source": "https://www.raspberrypi.com/products/compute-module-4/"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/products/compute-module-4/",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/products/compute-module-4/",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": false,
+    "insertionNote": "Catalog and comparison only: this family or desktop platform has no supported integration path in the cooling project.",
+    "architecture": "ARM Cortex-A72",
+    "memoryGeneration": "LPDDR4"
+  },
+  {
+    "id": "nucleo-f401re",
+    "manufacturer": "STMicroelectronics",
+    "manufacturerPartNumber": "NUCLEO-F401RE",
+    "name": "NUCLEO-F401RE",
+    "category": "boards",
+    "subcategory": "Development boards",
+    "kind": "product",
+    "description": "A development board with an integrated programming/debugging interface.",
+    "useCase": "Learning STM32 development without designing a PCB.",
+    "caution": "Header shape alone does not establish shield voltage compatibility.",
+    "specifications": {
+      "processor": {
+        "label": "MCU",
+        "value": "STM32F401RE",
+        "source": "https://www.st.com/en/evaluation-tools/nucleo-f401re.html"
+      },
+      "headers": {
+        "label": "Expansion",
+        "value": "Arduino Uno V3 / ST morpho",
+        "source": "https://www.st.com/en/evaluation-tools/nucleo-f401re.html"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.st.com/en/evaluation-tools/nucleo-f401re.html",
+        "title": "STMicroelectronics manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.st.com/en/evaluation-tools/nucleo-f401re.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "ARM Cortex-M4"
+  },
+  {
+    "id": "uno-r3",
+    "manufacturer": "Arduino",
+    "manufacturerPartNumber": "A000066",
+    "name": "Uno Rev3",
+    "category": "boards",
+    "subcategory": "Development boards",
+    "kind": "product",
+    "description": "A beginner-oriented board built around the ATmega328P.",
+    "useCase": "Learning sensors, buttons and simple actuators.",
+    "caution": "Use drivers for loads; do not power a motor directly from an I/O pin.",
+    "specifications": {
+      "processor": {
+        "label": "MCU",
+        "value": "ATmega328P",
+        "source": "https://docs.arduino.cc/hardware/uno-rev3/"
+      },
+      "clock": {
+        "label": "Clock",
+        "value": 16,
+        "source": "https://docs.arduino.cc/hardware/uno-rev3/",
+        "unit": "MHz"
+      }
+    },
+    "interfaces": [
+      "USB",
+      "SPI",
+      "I²C",
+      "UART"
+    ],
+    "sources": [
+      {
+        "url": "https://docs.arduino.cc/hardware/uno-rev3/",
+        "title": "Arduino manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://docs.arduino.cc/hardware/uno-rev3/",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "AVR"
+  },
+  {
+    "id": "esp32-devkitc",
+    "manufacturer": "Espressif",
+    "manufacturerPartNumber": "ESP32-DevKitC-32E",
+    "name": "ESP32-DevKitC-32E",
+    "category": "boards",
+    "subcategory": "Development boards",
+    "kind": "product",
+    "description": "An ESP32 prototyping board with a PCB antenna module.",
+    "useCase": "Wireless control prototypes.",
+    "caution": "Respect antenna clearance and board power instructions.",
+    "specifications": {
+      "flash": {
+        "label": "Flash",
+        "value": 4,
+        "source": "https://www.espressif.com/en/products/devkits/esp32-devkitc",
+        "unit": "MB"
+      },
+      "module": {
+        "label": "Installed module",
+        "value": "ESP32-WROOM-32E",
+        "source": "https://www.espressif.com/en/products/devkits/esp32-devkitc"
+      }
+    },
+    "interfaces": [
+      "Wi-Fi",
+      "Bluetooth",
+      "USB"
+    ],
+    "sources": [
+      {
+        "url": "https://www.espressif.com/en/products/devkits/esp32-devkitc",
+        "title": "Espressif manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.espressif.com/en/products/devkits/esp32-devkitc",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "board",
+    "visualSize": [
+      3.5,
+      0.3,
+      2.4
+    ],
+    "instanceType": "board",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "Xtensa LX6"
+  },
+  {
+    "id": "esp32-wroom",
+    "manufacturer": "Espressif",
+    "manufacturerPartNumber": "ESP32-WROOM-32E",
+    "name": "ESP32-WROOM-32E",
+    "category": "connectivity",
+    "subcategory": "Wi-Fi / Bluetooth",
+    "kind": "device",
+    "description": "A wireless MCU module that combines processing and radio circuitry.",
+    "useCase": "Connected sensors and wireless controls.",
+    "caution": "Flash variants and antenna layout require an exact board design.",
+    "specifications": {
+      "radio": {
+        "label": "Radio",
+        "value": "Wi-Fi / Bluetooth",
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf"
+      }
+    },
+    "interfaces": [
+      "Wi-Fi",
+      "Bluetooth"
+    ],
+    "sources": [
+      {
+        "url": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf",
+        "title": "Espressif manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "architecture": "Xtensa LX6",
+    "datasheetUrl": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf"
+  },
+  {
+    "id": "i5-12400",
+    "manufacturer": "Intel",
+    "manufacturerPartNumber": "i5-12400",
+    "name": "Core i5-12400",
+    "category": "processors",
+    "subcategory": "Desktop CPUs",
+    "kind": "product",
+    "description": "A desktop processor requiring a compatible motherboard.",
+    "useCase": "Desktop computing builds.",
+    "caution": "Socket, motherboard firmware, memory and cooling all need validation.",
+    "specifications": {
+      "socket": {
+        "label": "Socket",
+        "value": "FCLGA1700",
+        "source": "https://www.intel.com/content/www/us/en/products/sku/134586/intel-core-i512400-processor-18m-cache-up-to-4-40-ghz/specifications.html"
+      },
+      "memory": {
+        "label": "Memory support",
+        "value": "DDR4 / DDR5, motherboard-dependent",
+        "source": "https://www.intel.com/content/www/us/en/products/sku/134586/intel-core-i512400-processor-18m-cache-up-to-4-40-ghz/specifications.html"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.intel.com/content/www/us/en/products/sku/134586/intel-core-i512400-processor-18m-cache-up-to-4-40-ghz/specifications.html",
+        "title": "Intel manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.intel.com/content/www/us/en/products/sku/134586/intel-core-i512400-processor-18m-cache-up-to-4-40-ghz/specifications.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": false,
+    "insertionNote": "Catalog and comparison only: this family or desktop platform has no supported integration path in the cooling project.",
+    "architecture": "x86-64",
+    "socket": "FCLGA1700"
+  },
+  {
+    "id": "ryzen5600g",
+    "manufacturer": "AMD",
+    "manufacturerPartNumber": "100-100000252BOX",
+    "name": "Ryzen 5 5600G",
+    "category": "processors",
+    "subcategory": "Desktop CPUs",
+    "kind": "product",
+    "description": "A desktop processor with integrated Radeon graphics.",
+    "useCase": "Compact desktop systems.",
+    "caution": "TDP is not a measured project power budget; BIOS support also matters.",
+    "specifications": {
+      "cores": {
+        "label": "CPU cores",
+        "value": 6,
+        "source": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-5-5600g.html",
+        "unit": "cores"
+      },
+      "tdp": {
+        "label": "Default TDP",
+        "value": 65,
+        "source": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-5-5600g.html",
+        "unit": "W"
+      },
+      "socket": {
+        "label": "Socket",
+        "value": "AM4",
+        "source": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-5-5600g.html"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-5-5600g.html",
+        "title": "AMD manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-5-5600g.html",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "microcontroller",
+    "insertionSupported": false,
+    "insertionNote": "Catalog and comparison only: this family or desktop platform has no supported integration path in the cooling project.",
+    "architecture": "x86-64",
+    "socket": "AM4",
+    "memoryGeneration": "DDR4"
+  },
+  {
+    "id": "ddr4-8",
+    "manufacturer": "Kingston",
+    "manufacturerPartNumber": "KVR32N22S8/8",
+    "name": "ValueRAM DDR4 · 8GB",
+    "category": "memory",
+    "subcategory": "DDR4",
+    "kind": "product",
+    "description": "A removable desktop DDR4 memory module.",
+    "useCase": "Working memory for a compatible desktop motherboard.",
+    "caution": "DDR4 and DDR5 slots are not interchangeable; nominal VDD is not the full rail specification.",
+    "specifications": {
+      "capacity": {
+        "label": "Capacity",
+        "value": 8,
+        "source": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf",
+        "unit": "GB"
+      },
+      "rate": {
+        "label": "Data rate",
+        "value": 3200,
+        "source": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf",
+        "unit": "MT/s"
+      },
+      "voltage": {
+        "label": "Nominal VDD",
+        "value": 1.2,
+        "source": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf",
+        "unit": "V"
+      },
+      "pins": {
+        "label": "DIMM pins",
+        "value": 288,
+        "source": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf",
+        "unit": "pins"
+      }
+    },
+    "interfaces": [
+      "DDR4"
+    ],
+    "sources": [
+      {
+        "url": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf",
+        "title": "Kingston manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "memory",
+    "visualSize": [
+      4,
+      0.25,
+      1.2
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "memoryGeneration": "DDR4",
+    "datasheetUrl": "https://www.kingston.com/dataSheets/KVR32N22S8_8.pdf"
+  },
+  {
+    "id": "ddr5-16",
+    "manufacturer": "Kingston",
+    "manufacturerPartNumber": "KVR48U40BS8-16",
+    "name": "ValueRAM DDR5 · 16GB",
+    "category": "memory",
+    "subcategory": "DDR5",
+    "kind": "product",
+    "description": "A desktop DDR5 memory module.",
+    "useCase": "Working memory for a DDR5 motherboard.",
+    "caution": "Check the motherboard support list and memory generation.",
+    "specifications": {
+      "capacity": {
+        "label": "Capacity",
+        "value": 16,
+        "source": "https://www.kingston.com/datasheets/KVR48U40BS8-16.pdf",
+        "unit": "GB"
+      },
+      "rate": {
+        "label": "Data rate",
+        "value": 4800,
+        "source": "https://www.kingston.com/datasheets/KVR48U40BS8-16.pdf",
+        "unit": "MT/s"
+      }
+    },
+    "interfaces": [
+      "DDR5"
+    ],
+    "sources": [
+      {
+        "url": "https://www.kingston.com/datasheets/KVR48U40BS8-16.pdf",
+        "title": "Kingston manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.kingston.com/datasheets/KVR48U40BS8-16.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "memory",
+    "visualSize": [
+      4,
+      0.25,
+      1.2
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "memoryGeneration": "DDR5",
+    "datasheetUrl": "https://www.kingston.com/datasheets/KVR48U40BS8-16.pdf"
+  },
+  {
+    "id": "sram23lc",
+    "manufacturer": "Microchip",
+    "manufacturerPartNumber": "23LC1024",
+    "name": "23LC1024 serial SRAM",
+    "category": "memory",
+    "subcategory": "SRAM",
+    "kind": "device",
+    "description": "Serial working memory that loses data when unpowered.",
+    "useCase": "Temporary buffers for a microcontroller.",
+    "caution": "SPI bandwidth and bus voltage must suit the controller.",
+    "specifications": {
+      "capacity": {
+        "label": "Density",
+        "value": 1,
+        "source": "https://www.microchip.com/en-us/product/23LC1024",
+        "unit": "Mbit"
+      },
+      "voltage": {
+        "label": "Supply range",
+        "value": "2.5–5.5",
+        "source": "https://www.microchip.com/en-us/product/23LC1024",
+        "unit": "V"
+      }
+    },
+    "interfaces": [
+      "SPI"
+    ],
+    "sources": [
+      {
+        "url": "https://www.microchip.com/en-us/product/23LC1024",
+        "title": "Microchip manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.microchip.com/en-us/product/23LC1024",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "voltageRange": [
+      2.5,
+      5.5
+    ]
+  },
+  {
+    "id": "eeprom24lc",
+    "manufacturer": "Microchip",
+    "manufacturerPartNumber": "24LC256",
+    "name": "24LC256 EEPROM",
+    "category": "memory",
+    "subcategory": "EEPROM",
+    "kind": "device",
+    "description": "Serial nonvolatile memory for settings.",
+    "useCase": "Saving configuration across power cycles.",
+    "caution": "Write endurance, write timing and address pins require review.",
+    "specifications": {
+      "capacity": {
+        "label": "Density",
+        "value": 256,
+        "source": "https://www.microchip.com/en-us/product/24lc256",
+        "unit": "Kbit"
+      }
+    },
+    "interfaces": [
+      "I²C"
+    ],
+    "sources": [
+      {
+        "url": "https://www.microchip.com/en-us/product/24lc256",
+        "title": "Microchip manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.microchip.com/en-us/product/24lc256",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation."
+  },
+  {
+    "id": "w25q128",
+    "manufacturer": "Winbond",
+    "manufacturerPartNumber": "W25Q128JVSIQ",
+    "name": "W25Q128JVSIQ NOR Flash",
+    "category": "storage",
+    "subcategory": "SPI NOR Flash",
+    "kind": "device",
+    "description": "External serial flash memory for code or data.",
+    "useCase": "Firmware storage on a custom embedded board.",
+    "caution": "Erase blocks and write endurance differ from RAM.",
+    "specifications": {
+      "capacity": {
+        "label": "Density",
+        "value": 128,
+        "source": "https://www.winbond.com/export/sites/winbond/product-selection-guide/file/2025-Product-Selection-Guide-Winbond-Code-Storage-Flash-Memory.pdf",
+        "unit": "Mbit"
+      },
+      "voltage": {
+        "label": "Supply range",
+        "value": "2.7–3.6",
+        "source": "https://www.winbond.com/export/sites/winbond/product-selection-guide/file/2025-Product-Selection-Guide-Winbond-Code-Storage-Flash-Memory.pdf",
+        "unit": "V"
+      },
+      "package": {
+        "label": "Package",
+        "value": "SOP-8, 208 mil",
+        "source": "https://www.winbond.com/export/sites/winbond/product-selection-guide/file/2025-Product-Selection-Guide-Winbond-Code-Storage-Flash-Memory.pdf"
+      }
+    },
+    "interfaces": [
+      "SPI",
+      "Quad SPI"
+    ],
+    "sources": [
+      {
+        "url": "https://www.winbond.com/export/sites/winbond/product-selection-guide/file/2025-Product-Selection-Guide-Winbond-Code-Storage-Flash-Memory.pdf",
+        "title": "Winbond manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.winbond.com/export/sites/winbond/product-selection-guide/file/2025-Product-Selection-Guide-Winbond-Code-Storage-Flash-Memory.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "chip",
+    "visualSize": [
+      1.2,
+      0.24,
+      1.2
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "voltageRange": [
+      2.7,
+      3.6
+    ],
+    "package": "SOP-8 208 mil",
+    "datasheetUrl": "https://www.winbond.com/export/sites/winbond/product-selection-guide/file/2025-Product-Selection-Guide-Winbond-Code-Storage-Flash-Memory.pdf"
+  },
+  {
+    "id": "ssd970",
+    "manufacturer": "Samsung",
+    "manufacturerPartNumber": "MZ-V7S1T0",
+    "name": "970 EVO Plus · 1TB",
+    "category": "storage",
+    "subcategory": "NVMe SSDs",
+    "kind": "product",
+    "description": "An NVMe solid-state drive for persistent file storage.",
+    "useCase": "Operating systems and large data sets.",
+    "caution": "An M.2 shape alone does not establish protocol support.",
+    "specifications": {
+      "capacity": {
+        "label": "Capacity",
+        "value": 1,
+        "source": "https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_NVMe_SSD_970_EVO_Plus_Data_Sheet_Rev.3.0_10129514071343.pdf",
+        "unit": "TB"
+      },
+      "format": {
+        "label": "Form factor",
+        "value": "M.2 2280",
+        "source": "https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_NVMe_SSD_970_EVO_Plus_Data_Sheet_Rev.3.0_10129514071343.pdf"
+      }
+    },
+    "interfaces": [
+      "NVMe",
+      "PCIe"
+    ],
+    "sources": [
+      {
+        "url": "https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_NVMe_SSD_970_EVO_Plus_Data_Sheet_Rev.3.0_10129514071343.pdf",
+        "title": "Samsung manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_NVMe_SSD_970_EVO_Plus_Data_Sheet_Rev.3.0_10129514071343.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "drive",
+    "visualSize": [
+      3.2,
+      0.2,
+      1.3
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "datasheetUrl": "https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_NVMe_SSD_970_EVO_Plus_Data_Sheet_Rev.3.0_10129514071343.pdf"
+  },
+  {
+    "id": "tmp102",
+    "manufacturer": "Texas Instruments",
+    "manufacturerPartNumber": "TMP102",
+    "name": "TMP102 temperature sensor",
+    "category": "sensors",
+    "subcategory": "Temperature",
+    "kind": "device",
+    "description": "A digital sensor that reports its local temperature.",
+    "useCase": "Monitoring a board or ambient environment.",
+    "caution": "Use the correct bus voltage and review thermal placement.",
+    "specifications": {
+      "resolution": {
+        "label": "Resolution",
+        "value": 12,
+        "source": "https://www.ti.com/product/TMP102",
+        "unit": "bits"
+      },
+      "voltage": {
+        "label": "Supply range",
+        "value": "1.4–3.6",
+        "source": "https://www.ti.com/product/TMP102",
+        "unit": "V"
+      },
+      "package": {
+        "label": "Package",
+        "value": "SOT563",
+        "source": "https://www.ti.com/product/TMP102"
+      }
+    },
+    "interfaces": [
+      "I²C",
+      "SMBus"
+    ],
+    "sources": [
+      {
+        "url": "https://www.ti.com/product/TMP102",
+        "title": "Texas Instruments manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.ti.com/product/TMP102",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "sensor",
+    "visualSize": [
+      0.8,
+      0.25,
+      0.7
+    ],
+    "instanceType": "sensor",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "voltageRange": [
+      1.4,
+      3.6
+    ],
+    "package": "SOT563",
+    "physicalPinout": {
+      "package": "DRL SOT-563 6-pin",
+      "source": "https://www.ti.com/lit/ds/symlink/tmp102.pdf",
+      "sourceSection": "§4 pin functions; §5.3 supply; §7.4 pull-ups",
+      "pins": [
+        {
+          "id": "SCL",
+          "number": "1",
+          "role": "input",
+          "interface": "I2C",
+          "function": "SCL",
+          "note": "I2C clock; pull-up required"
+        },
+        {
+          "id": "GND",
+          "number": "2",
+          "role": "ground"
+        },
+        {
+          "id": "ALERT",
+          "number": "3",
+          "role": "output",
+          "drive": "open-drain",
+          "note": "Alert; external pull-up required"
+        },
+        {
+          "id": "ADD0",
+          "number": "4",
+          "role": "input",
+          "note": "I2C address select; tie to V+ or GND"
+        },
+        {
+          "id": "V+",
+          "number": "5",
+          "role": "power-input",
+          "supplyRange": [
+            1.4,
+            3.6
+          ]
+        },
+        {
+          "id": "SDA",
+          "number": "6",
+          "role": "bidirectional",
+          "interface": "I2C",
+          "function": "SDA",
+          "drive": "open-drain",
+          "note": "External pull-up required"
+        }
+      ]
+    },
+    "datasheetUrl": "https://www.ti.com/lit/ds/symlink/tmp102.pdf"
+  },
+  {
+    "id": "bme280",
+    "manufacturer": "Bosch Sensortec",
+    "manufacturerPartNumber": "BME280",
+    "name": "BME280 environment sensor",
+    "category": "sensors",
+    "subcategory": "Humidity / pressure",
+    "kind": "device",
+    "description": "A combined humidity, pressure and temperature sensor.",
+    "useCase": "Weather-monitoring and environment dashboards.",
+    "caution": "Review separate supply and I/O limits and the operating envelope.",
+    "specifications": {
+      "pressure": {
+        "label": "Full-accuracy pressure range",
+        "value": "300–1100",
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf",
+        "unit": "hPa"
+      }
+    },
+    "interfaces": [
+      "I²C",
+      "SPI"
+    ],
+    "sources": [
+      {
+        "url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf",
+        "title": "Bosch Sensortec manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "sensor",
+    "visualSize": [
+      0.8,
+      0.25,
+      0.7
+    ],
+    "instanceType": "sensor",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "datasheetUrl": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"
+  },
+  {
+    "id": "sht31",
+    "manufacturer": "Sensirion",
+    "manufacturerPartNumber": "SHT31-DIS-B",
+    "name": "SHT31-DIS-B humidity sensor",
+    "category": "sensors",
+    "subcategory": "Humidity / temperature",
+    "kind": "device",
+    "description": "A digital humidity and temperature sensor.",
+    "useCase": "Indoor environmental monitoring.",
+    "caution": "Manufacturer overview and table differ on minimum supply; this catalog leaves the range unknown pending datasheet review.",
+    "specifications": {
+      "humidity": {
+        "label": "Typical humidity accuracy",
+        "value": 2,
+        "source": "https://sensirion.com/products/catalog/SHT31-DIS-B",
+        "unit": "%RH"
+      },
+      "size": {
+        "label": "Body dimensions",
+        "value": "2.5 × 2.5 × 0.9",
+        "source": "https://sensirion.com/products/catalog/SHT31-DIS-B",
+        "unit": "mm"
+      }
+    },
+    "interfaces": [
+      "I²C"
+    ],
+    "sources": [
+      {
+        "url": "https://sensirion.com/products/catalog/SHT31-DIS-B",
+        "title": "Sensirion manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://sensirion.com/products/catalog/SHT31-DIS-B",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "sensor",
+    "visualSize": [
+      0.8,
+      0.25,
+      0.7
+    ],
+    "instanceType": "sensor",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation."
+  },
+  {
+    "id": "irlz44n",
+    "manufacturer": "Infineon",
+    "manufacturerPartNumber": "IRLZ44NPbF",
+    "name": "IRLZ44NPbF MOSFET",
+    "category": "power",
+    "subcategory": "MOSFETs",
+    "kind": "device",
+    "description": "A transistor for switching a load with a gate-control signal.",
+    "useCase": "Power stages for loads such as fans.",
+    "caution": "Gate threshold is not the voltage for full turn-on. Review gate drive, thermal limits and load protection.",
+    "specifications": {
+      "vds": {
+        "label": "Drain-source absolute maximum",
+        "value": 55,
+        "source": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf",
+        "unit": "V"
+      },
+      "package": {
+        "label": "Package",
+        "value": "TO-220",
+        "source": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf",
+        "title": "Infineon manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "power",
+    "visualSize": [
+      1,
+      0.35,
+      0.9
+    ],
+    "instanceType": "mosfet",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "package": "TO-220",
+    "datasheetUrl": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf",
+    "physicalPinout": {
+      "package": "TO-220AB",
+      "source": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf",
+      "sourceSection": "Page 8 lead assignments: 1 gate, 2 drain, 3 source (tab = drain)",
+      "pins": [
+        {
+          "id": "GATE",
+          "number": "1",
+          "role": "input",
+          "note": "Gate-drive levels/current suitability require a circuit-specific analysis"
+        },
+        {
+          "id": "DRAIN",
+          "number": "2",
+          "role": "passive"
+        },
+        {
+          "id": "SOURCE",
+          "number": "3",
+          "role": "passive"
+        }
+      ]
+    }
+  },
+  {
+    "id": "lm1117",
+    "manufacturer": "Texas Instruments",
+    "manufacturerPartNumber": "LM1117",
+    "name": "LM1117 regulator family",
+    "category": "power",
+    "subcategory": "Voltage regulators",
+    "kind": "family",
+    "description": "A family of linear regulators with fixed and adjustable outputs.",
+    "useCase": "Creating a regulated supply from a suitable higher voltage.",
+    "caution": "Choose the exact output variant; dropout, capacitors and thermal dissipation matter.",
+    "specifications": {
+      "current": {
+        "label": "Maximum rated output",
+        "value": 800,
+        "source": "https://www.ti.com/product/LM1117",
+        "unit": "mA"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.ti.com/product/LM1117",
+        "title": "Texas Instruments manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.ti.com/product/LM1117",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "power",
+    "visualSize": [
+      1,
+      0.35,
+      0.9
+    ],
+    "instanceType": "mosfet",
+    "insertionSupported": false,
+    "insertionNote": "Catalog and comparison only: this family or desktop platform has no supported integration path in the cooling project."
+  },
+  {
+    "id": "drv8833",
+    "manufacturer": "Texas Instruments",
+    "manufacturerPartNumber": "DRV8833",
+    "name": "DRV8833 motor driver",
+    "category": "other",
+    "subcategory": "Motor drivers",
+    "kind": "device",
+    "description": "A dual H-bridge IC for controlling motor direction.",
+    "useCase": "Small brushed motors or a stepper motor.",
+    "caution": "Current capacity depends on package, PCB thermal design and operating conditions.",
+    "specifications": {
+      "voltage": {
+        "label": "Motor supply range",
+        "value": "2.7–10.8",
+        "source": "https://www.ti.com/product/DRV8833",
+        "unit": "V"
+      }
+    },
+    "interfaces": [],
+    "sources": [
+      {
+        "url": "https://www.ti.com/product/DRV8833",
+        "title": "Texas Instruments manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.ti.com/product/DRV8833",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "power",
+    "visualSize": [
+      1,
+      0.35,
+      0.9
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "voltageRange": [
+      2.7,
+      10.8
+    ]
+  },
+  {
+    "id": "pi-cooler",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "Active Cooler for Raspberry Pi 5",
+    "name": "Raspberry Pi 5 Active Cooler",
+    "category": "other",
+    "subcategory": "Cooling fans",
+    "kind": "product",
+    "description": "A heatsink and blower assembly designed for Raspberry Pi 5.",
+    "useCase": "Cooling a Pi 5 during demanding workloads.",
+    "caution": "Mounting and the four-pin fan connection are Pi 5 specific.",
+    "specifications": {
+      "voltage": {
+        "label": "Input supply",
+        "value": 5,
+        "source": "https://www.raspberrypi.com/products/active-cooler/",
+        "unit": "V"
+      },
+      "control": {
+        "label": "Control",
+        "value": "PWM with tachometer",
+        "source": "https://www.raspberrypi.com/products/active-cooler/"
+      }
+    },
+    "interfaces": [
+      "PWM"
+    ],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/products/active-cooler/",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/products/active-cooler/",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "fan",
+    "visualSize": [
+      2.5,
+      0.6,
+      2.5
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation.",
+    "platformIds": [
+      "pi5"
+    ]
+  },
+  {
+    "id": "touch2",
+    "manufacturer": "Raspberry Pi",
+    "manufacturerPartNumber": "Touch Display 2 7-inch",
+    "name": "Touch Display 2 · 7-inch",
+    "category": "other",
+    "subcategory": "Displays",
+    "kind": "product",
+    "description": "A touch-enabled display for Raspberry Pi computers.",
+    "useCase": "Interactive dashboards and control panels.",
+    "caution": "Requires compatible DSI, power connections and software support.",
+    "specifications": {
+      "resolution": {
+        "label": "Resolution",
+        "value": "720 × 1280",
+        "source": "https://www.raspberrypi.com/products/touch-display-2/",
+        "unit": "pixels"
+      },
+      "diagonal": {
+        "label": "Diagonal",
+        "value": 7,
+        "source": "https://www.raspberrypi.com/products/touch-display-2/",
+        "unit": "in"
+      }
+    },
+    "interfaces": [
+      "DSI"
+    ],
+    "sources": [
+      {
+        "url": "https://www.raspberrypi.com/products/touch-display-2/",
+        "title": "Raspberry Pi manufacturer reference",
+        "license": "Manufacturer documentation; linked only, no model redistribution rights assumed."
+      }
+    ],
+    "productUrl": "https://www.raspberrypi.com/products/touch-display-2/",
+    "lastVerifiedAt": "2026-10-10",
+    "verificationStatus": "partial",
+    "modelAccuracy": "generic_visualization",
+    "model": "display",
+    "visualSize": [
+      4,
+      0.25,
+      3
+    ],
+    "instanceType": "catalog",
+    "insertionSupported": true,
+    "insertionNote": "Conceptual visual object only. No wiring, physical-fit or electrical validation."
+  }
+]

@@ -1,0 +1,623 @@
+.inspector-tabs {
+  padding: 4px 10px;
+  border-bottom: 1px solid #29394e;
+}
+.inspector-tabs button {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 10px;
+}
+.inspector-section[hidden] {
+  display: none;
+}
+.inspector-section a {
+  color: #87b7ff;
+  font-size: 10px;
+}
+.inspector-section ul {
+  font-size: 11px;
+  color: #a5b7ce;
+  line-height: 1.8;
+  padding-left: 18px;
+}
+.inspector-advanced {
+  margin: 12px;
+  border: 1px solid #293f5c;
+  border-radius: 6px;
+}
+.inspector-advanced summary {
+  padding: 12px;
+  color: #a8c3e8;
+  font-size: 11px;
+  cursor: pointer;
+}
+.inspector-advanced .inspector-section {
+  padding: 12px;
+}
+.workspace-quick-actions button:focus-visible,
+.design-drawer button:focus-visible,
+.inspector-tabs button:focus-visible,
+.inspector-advanced summary:focus-visible {
+  outline: 2px solid #30d7e8;
+  outline-offset: 2px;
+}
+.design-drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  height: 100dvh;
+  max-height: 100dvh;
+  width: min(480px, 100vw);
+  max-width: 100vw;
+  background: #111b29;
+  color: #e8f0ff;
+  border: 0;
+  border-left: 1px solid #3b5271;
+  padding: 22px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.design-drawer[open] {
+  animation: drawer-in 260ms ease;
+}
+.design-drawer::backdrop {
+  background: #040a14a8;
+}
+.design-drawer header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.design-drawer h2 {
+  font-size: 22px;
+  margin: 7px 0 15px;
+}
+.design-drawer header small {
+  color: #30d7e8;
+  letter-spacing: 1.5px;
+  font-size: 9px;
+}
+.design-drawer header > button {
+  font-size: 28px;
+  padding: 8px;
+}
+.design-drawer p {
+  font-size: 11px;
+  color: #91a3bf;
+  line-height: 1.7;
+  margin: 10px 0;
+}
+.drawer-search,
+.drawer-category {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 12px 0;
+  font-size: 11px;
+  color: #91a3bf;
+}
+.design-drawer input,
+.design-drawer select {
+  background: #0b1320;
+  color: #e8f0ff;
+  border: 1px solid #365070;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+}
+.drawer-clear {
+  color: #84b5f7;
+  font-size: 11px;
+}
+.drawer-results {
+  color: #91a3bf;
+  font-size: 10px;
+  padding-top: 12px;
+}
+.design-drawer article {
+  padding: 16px;
+  margin: 14px 0;
+  border: 1px solid #293d55;
+  border-radius: 8px;
+  background: #172232;
+}
+.design-drawer article.selected {
+  border-color: #397dff;
+}
+.design-drawer article small {
+  font-size: 10px;
+  color: #91a3bf;
+}
+.design-drawer h3 {
+  font-size: 15px;
+  margin: 8px 0 12px;
+}
+.design-drawer h3 button {
+  text-align: left;
+}
+.design-drawer dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.design-drawer dt {
+  color: #91a3bf;
+}
+.design-drawer dd {
+  margin: 0;
+}
+.design-drawer a {
+  font-size: 11px;
+  color: #8abaff;
+}
+.design-drawer .button {
+  font-size: 11px;
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@media (max-width: 759px) {
+  .design-drawer {
+    padding: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .design-drawer[open] {
+    animation: none;
+  }
+}
+[data-reduced-motion='true'] .design-drawer[open] {
+  animation: none;
+}
+
+/* The canvas and all tool contents retain their identity as the dock changes. */
+.focused-workspace.app-shell {
+  min-height: 0;
+}
+.workspace-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+.design-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.design-shell.workspace-hidden {
+  display: none;
+}
+.focused-workspace .viewport {
+  min-height: 0;
+}
+.focused-workspace .library-workspace-shell {
+  min-width: 0;
+}
+.workspace-quick-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+.design-focus {
+  font-size: 10px;
+  color: #b1c9ea;
+  padding: 7px 10px;
+  border: 1px solid #354c6a;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.design-focus[aria-pressed='true'] {
+  background: #397dff24;
+  color: #88b7ff;
+}
+.tools-panel {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  max-width: calc(100% - 420px);
+  min-height: 0;
+  border-left: 1px solid #31445e;
+  background: #101827;
+  color: #e8f0ff;
+  z-index: 12;
+}
+.tools-panel[hidden],
+.tool-content[hidden] {
+  display: none;
+}
+.tools-panel.is-expanded {
+  width: min(800px, calc(100% - 420px));
+}
+.tools-panel.is-resizing {
+  user-select: none;
+}
+.tools-resizer {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  left: -5px;
+  width: 10px;
+  cursor: col-resize;
+  touch-action: none;
+}
+.tools-resizer:hover,
+.tools-resizer:focus-visible,
+.is-resizing > .tools-resizer {
+  background: #397dff55;
+  outline: none;
+}
+.tools-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #29394e;
+  flex-shrink: 0;
+}
+.tools-heading h2 {
+  font-size: 13px;
+  margin: 0;
+  flex: 1;
+}
+.tools-heading button,
+.selected-tools button {
+  font-size: 11px;
+  color: #a8c9f5;
+  padding: 6px;
+  border-radius: 4px;
+}
+.tools-heading button:hover,
+.selected-tools button:hover {
+  background: #243750;
+}
+.tools-heading button:last-child {
+  font-size: 22px;
+  padding-block: 0;
+}
+.selected-tools {
+  padding: 7px 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  border-bottom: 1px solid #29394e;
+}
+.selected-tools > span {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #91a3bf;
+  font-size: 11px;
+}
+.tool-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.tools-panel .design-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  flex-shrink: 0;
+}
+.tools-panel .design-actions .button {
+  flex: 1;
+  font-size: 11px;
+  padding: 9px 5px;
+}
+.tools-panel .project-sidebar,
+.tools-panel .inspector {
+  display: flex;
+  position: static;
+  flex: 1;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  border: 0;
+  box-shadow: none;
+  animation: none;
+}
+.tools-panel .sidebar-bottom {
+  display: none;
+}
+.tools-panel .project-tree {
+  flex: 1;
+  overflow: auto;
+}
+.workspace-preferences {
+  padding: 16px;
+}
+.workspace-preferences h2 {
+  font-size: 16px;
+  margin: 0 0 10px;
+}
+.workspace-preferences h3 {
+  font-size: 11px;
+  margin: 22px 0 10px;
+  color: #b4c9e7;
+}
+.workspace-preferences p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #91a3bf;
+}
+.workspace-preferences .mode-bar {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.workspace-preferences .mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+.workspace-preferences .mode-right {
+  display: none;
+}
+.workspace-preferences .floating-toolbar {
+  position: static;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  transform: none;
+  padding: 5px;
+  margin-bottom: 10px;
+  width: auto;
+  height: auto;
+  max-height: none;
+}
+.workspace-preferences .floating-toolbar .toolbar-divider {
+  display: none;
+}
+.camera-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.camera-presets .button {
+  font-size: 10px;
+  padding: 6px 9px;
+}
+.workspace-preferences .settings-row {
+  padding: 12px 0;
+  font-size: 11px;
+  gap: 10px;
+}
+.workspace-preferences input[type='range'] {
+  width: 120px;
+}
+.workspace-preferences select {
+  background: #172338;
+  color: #e8f0ff;
+  padding: 6px;
+  border: 1px solid #354c6a;
+  border-radius: 4px;
+}
+.tools-panel .firmware-panel {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  transition: none;
+}
+.tools-panel .firmware-content {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+.tools-panel .firmware-header {
+  height: auto;
+  min-height: 35px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px;
+}
+.tools-panel .firmware-filebar,
+.tools-panel .firmware-association {
+  flex-wrap: wrap;
+}
+.tools-panel .firmware-associated {
+  min-height: 480px;
+}
+.tools-panel .firmware-code-region {
+  min-height: 240px;
+}
+.tools-panel .catalog-target select {
+  max-width: 100%;
+  margin: 6px 0;
+}
+.tools-panel .firmware-tabbar [role='tab'] {
+  padding: 8px;
+}
+.tools-panel .command-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  border: 0;
+  gap: 12px;
+  overflow: auto;
+}
+.tools-panel .assistant-response {
+  position: static;
+  order: 2;
+  flex: 1 0 180px;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.tools-panel .response-messages {
+  flex: 1;
+  max-height: none;
+  overflow: auto;
+}
+.tools-panel .response-heading small {
+  display: block;
+  margin-left: 0;
+}
+.tools-panel .response-heading > span {
+  flex-wrap: wrap;
+}
+.tools-panel .guide-controls {
+  order: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  gap: 8px;
+}
+.tools-panel .guide-controls > span {
+  width: 100%;
+}
+.tools-panel .guide-controls button {
+  margin-left: 0;
+}
+.tools-panel .guide-disclosure {
+  order: 1;
+  font-size: 10px;
+}
+.tools-panel .command-input {
+  order: 3;
+  flex-shrink: 0;
+}
+.tools-panel .suggestions {
+  order: 4;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.tools-panel .suggestions > span {
+  width: 100%;
+}
+.tools-panel .suggestions > button {
+  display: flex;
+  font-size: 10px;
+}
+.focused-workspace .placement-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 45%;
+  overflow: auto;
+  z-index: 6;
+}
+.is-focus-mode .viewport-title,
+.is-focus-mode .viewport-bottom,
+.is-focus-mode .view-cube {
+  display: none;
+}
+.workspace-quick-actions button:focus-visible,
+.tools-panel button:focus-visible {
+  outline: 2px solid #30d7e8;
+  outline-offset: -2px;
+}
+@media (max-width: 900px) {
+  .tools-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 31;
+    min-width: 0;
+    max-width: calc(100% - 32px);
+    box-shadow: -12px 0 40px #0008;
+  }
+  .tools-panel.is-expanded {
+    width: calc(100% - 32px);
+  }
+  .tools-resizer {
+    display: none;
+  }
+  .tools-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    background: #03081277;
+    cursor: default;
+  }
+  .design-focus {
+    font-size: 9px;
+    padding-inline: 6px;
+  }
+}
+.tools-panel .project-sidebar > .panel-heading,
+.tools-panel .inspector > .panel-heading {
+  display: none;
+}
+
+/* A single, always available viewport control row, including in Focus Mode. */
+.design-shell > .mode-bar {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  gap: 8px;
+  overflow: hidden;
+}
+.design-shell > .mode-bar .mode-tabs {
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.design-shell > .mode-bar .mode-tabs button,
+.fit-model-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.fit-model-button {
+  color: #c5d9f7;
+  border-color: #385475;
+  background: #1b2d45;
+}
+.fit-model-button:hover { background: #263e5d; }
+.fit-model-button:focus-visible, .mode-tabs button:focus-visible { outline: 2px solid #7caeff; outline-offset: -2px; }
+.design-shell > .mode-bar .mode-right { flex: 0 0 auto; }
+@media (max-width: 600px) {
+  .design-shell > .mode-bar { padding-inline: 6px; gap: 6px; }
+  .design-shell > .mode-bar .mode-tabs button, .fit-model-button { padding-inline: 8px; gap: 5px; font-size: 10px; }
+  .design-shell > .mode-bar svg { display: block; flex-shrink: 0; width: 15px; height: 15px; }
+}
+@media (max-width: 900px) {
+  .workspace-layout:has(.design-shell:not(.workspace-hidden)) .tools-panel,
+  .workspace-layout:has(.design-shell:not(.workspace-hidden)) .tools-backdrop {
+    top: 44px;
+  }
+}

@@ -1,0 +1,36 @@
+.schematic-shell{display:flex;flex:1;flex-direction:column;min-width:0;min-height:0;background:#0c1522;color:#dce9fd}
+.schematic-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-bottom:1px solid #2b3d53}
+.schematic-header small{font-size:9px;color:#76adff;letter-spacing:1.5px}
+.schematic-header h1{font-size:17px;margin:5px 0}
+.schematic-header p{color:#9badc6;font-size:11px;line-height:1.6}
+.schematic-zoom{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.schematic-zoom button,.schematic-zoom output{padding:8px 12px;border:1px solid #364e6e;border-radius:6px;background:#1c3048;color:#eaf4ff}
+.schematic-body{display:flex;flex:1;min-height:0;min-width:0}
+.schematic-sheet{background-color:#0e1928;background-image:radial-gradient(circle,#30425b 0.9px,transparent 1px);background-size:20px 20px;overflow:auto;flex:1;min-width:0;min-height:0;overscroll-behavior:contain}
+.schematic-sheet svg{display:block;max-width:none;margin-inline:auto}
+.schematic-sheet svg g[role='button']{cursor:pointer;outline:none}
+.schematic-sheet svg g[role='button']:focus-visible{filter:drop-shadow(0 0 6px #b6d8ff)}
+.schematic-net-panel{flex:0 0 clamp(270px,18vw,330px);box-sizing:border-box;min-width:0;overflow:auto;border-left:1px solid #34445c;padding:18px;background:#101c2c}
+.schematic-net-panel h2{font-size:15px;margin-bottom:8px}
+.schematic-net-panel h3{font-size:12px;margin:18px 0 9px;color:#b3c9e7}
+.schematic-net-panel p{font-size:11px;line-height:1.65;color:#a4b6d0}
+.schematic-wire-list,.schematic-net-list{list-style:none;margin:0;padding:0}
+.schematic-wire-list li{padding:8px 0;border-bottom:1px solid #2b3b50;display:flex;gap:10px;justify-content:space-between;align-items:center;font-size:10px}
+.schematic-wire-list button,.schematic-cancel{color:#9ec4ff;font-size:11px;border:1px solid #355477;border-radius:5px;padding:5px 7px}
+.schematic-net-list li{font-size:10px;padding:5px 0;color:#9db2d0}
+.schematic-net-panel .schematic-warning{margin-top:22px;color:#e8c98a;padding:10px;border:1px solid #675739;background:#3b311d55;border-radius:6px}
+.schematic-net-panel .schematic-message{margin:12px 0;color:#b6e8c5;background:#1a3a30;padding:9px;border-radius:5px}
+.schematic-empty,.schematic-empty-net{padding:14px;color:#95a9c3;font-size:12px}
+@media(max-width:1050px){.schematic-body{flex-direction:column}.schematic-net-panel{flex:none;max-height:245px;border-left:0;border-top:1px solid #34445c}}
+
+.schematic-review-list{list-style:none;padding:0;margin:0;display:grid;gap:6px;max-height:260px;overflow:auto}
+.schematic-review-list li{padding:8px;border:1px solid #354a61;background:#1d3047;border-radius:5px}
+.schematic-review-list strong{font-size:10px;color:#e8d1a9}
+.schematic-review-list li p{font-size:10px;margin:5px 0}
+.schematic-review-list button{color:#9ec4ff;font-size:10px;border:1px solid #355477;border-radius:4px;padding:4px 6px}
+
+/* Manufacturer pin evidence. Kept within the existing connections panel. */
+.schematic-pinout { padding: 12px; margin: 12px 0; border: 1px solid #365976; border-radius: 8px; background: #13253a; font-size: 12px; }
+.schematic-pinout ul { margin: 8px 0; padding-left: 18px; max-height: 165px; overflow: auto; }
+.schematic-pinout a, .schematic-review-list a { color: #85c8ff; overflow-wrap: anywhere; }
+.schematic-pinout p { margin: 6px 0; color: #adbfda; }

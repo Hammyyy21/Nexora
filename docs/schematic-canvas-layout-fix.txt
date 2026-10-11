@@ -1,0 +1,43 @@
+Nexora — Responsive Schematic Canvas Gap & Padding Fix
+====================================================
+
+Problem: Schematic SVG had a fixed width based on three columns, leaving a large blank
+region to the right of the symbols. The right-hand connections panel was also cramped.
+
+Solution:
+- Measure the real schematic-sheet width with ResizeObserver (window resize fallback).
+- Reposition symbols across the available space without horizontally stretching text/cards.
+- Use the same symbol coordinates for terminal dots and wires, preserving alignment.
+- Center incomplete diagram rows and the zoomed-out SVG.
+- Continue the dotted background throughout the entire schematic drawing pane.
+- Give the connection/review sidebar a modest responsive width.
+- Leave vertical card size and port spacing unchanged.
+
+The installer edits only:
+  src/schematic/SchematicWorkspace.tsx
+  src/schematic/schematic.css
+
+It backs up both original files before editing with
+'.before-responsive-layout.bak' suffixes. The installer is designed to STOP without
+editing files if it does not recognize the version currently installed.
+
+Install from macOS Terminal:
+
+  cd ~/Desktop
+  unzip -o ~/Downloads/Nexora_Schematic_Canvas_Fill_Fix.zip -d ~/Desktop
+  cd ~/Desktop/Nexora
+  python3 tools/fix_schematic_canvas_layout.py
+  npm test -- --testTimeout=15000
+  npm run lint
+  npm run build
+
+If the installer says it cannot locate an anchor, upload the CURRENT files
+src/schematic/SchematicWorkspace.tsx and src/schematic/schematic.css for a
+version-specific fix. It does not overwrite them in that case.
+
+Revert the source changes if needed:
+  cd ~/Desktop/Nexora
+  cp src/schematic/SchematicWorkspace.tsx.before-responsive-layout.bak src/schematic/SchematicWorkspace.tsx
+  cp src/schematic/schematic.css.before-responsive-layout.bak src/schematic/schematic.css
+
+Use browser hard refresh (Cmd+Shift+R) after restarting or rebuilding.

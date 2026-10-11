@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 2,
+  "id": "demo-iot",
+  "name": "IoT Environmental Monitor",
+  "placementMode": "free",
+  "boardTemplateId": "iot",
+  "components": [
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#14685e",
+      "material": "polymer",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        0,
+        0
+      ],
+      "purpose": "Mechanical foundation for the controller. Concept dimensions: 92 × 64 mm.",
+      "connectionNotes": "Illustrative connections only. Electrical behavior is not simulated.",
+      "id": "pcb",
+      "name": "Main PCB",
+      "reference": "PCB1",
+      "type": "board",
+      "group": "structure",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        10,
+        0.16,
+        7
+      ],
+      "description": "Two-layer FR-4 board with solder mask, copper routing, plated pads, and four mounting holes.",
+      "fixed": true
+    },
+    {
+      "id": "part-bd38cf54-2396-4f98-abc0-664084b6ca73",
+      "catalogId": "esp32-devkitc",
+      "integration": "visual-only",
+      "initialPosition": [
+        -1.2,
+        1.5,
+        0
+      ],
+      "name": "ESP32-DevKitC-32E",
+      "reference": "LIB-BD38CF",
+      "type": "board",
+      "group": "structure",
+      "description": "An ESP32 prototyping board with a PCB antenna module.",
+      "purpose": "Wireless control prototypes. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        -2.0711,
+        0.27,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        4.826,
+        0.3,
+        2.794
+      ],
+      "color": "#177c69",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    },
+    {
+      "id": "part-9c0f10ca-ba88-424a-b3c3-4bafc3f1252f",
+      "catalogId": "bme280",
+      "integration": "visual-only",
+      "initialPosition": [
+        1.2,
+        1.5,
+        0
+      ],
+      "name": "BME280 environment sensor",
+      "reference": "LIB-9C0F10",
+      "type": "sensor",
+      "group": "active",
+      "description": "A combined humidity, pressure and temperature sensor.",
+      "purpose": "Weather-monitoring and environment dashboards. Generic visualization, not a manufacturer-accurate digital twin.",
+      "connectionNotes": "Visual-only placement. No electrical connections or board integration have been established.",
+      "position": [
+        2.19,
+        0.245,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "dimensions": [
+        0.8,
+        0.25,
+        0.7
+      ],
+      "color": "#34445c",
+      "material": "matte",
+      "opacity": 1,
+      "visible": true,
+      "explodedOffset": [
+        0,
+        1.5,
+        0
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "wire-d9e8678a-7ce5-481a-bd56-92ad934f761d",
+      "from": {
+        "componentId": "part-bd38cf54-2396-4f98-abc0-664084b6ca73",
+        "portId": "demo:VDD"
+      },
+      "to": {
+        "componentId": "part-9c0f10ca-ba88-424a-b3c3-4bafc3f1252f",
+        "portId": "demo:VDD"
+      }
+    },
+    {
+      "id": "wire-35468dbc-abe5-46b9-8558-009918423689",
+      "from": {
+        "componentId": "part-bd38cf54-2396-4f98-abc0-664084b6ca73",
+        "portId": "demo:GND"
+      },
+      "to": {
+        "componentId": "part-9c0f10ca-ba88-424a-b3c3-4bafc3f1252f",
+        "portId": "demo:GND"
+      }
+    },
+    {
+      "id": "wire-721ae0d6-a593-42d2-8435-2c5fe9dd704b",
+      "from": {
+        "componentId": "part-bd38cf54-2396-4f98-abc0-664084b6ca73",
+        "portId": "demo:SDA"
+      },
+      "to": {
+        "componentId": "part-9c0f10ca-ba88-424a-b3c3-4bafc3f1252f",
+        "portId": "demo:SDA"
+      }
+    },
+    {
+      "id": "wire-91bc153e-a9cc-4e38-be5e-4e258c153401",
+      "from": {
+        "componentId": "part-bd38cf54-2396-4f98-abc0-664084b6ca73",
+        "portId": "demo:SCL"
+      },
+      "to": {
+        "componentId": "part-9c0f10ca-ba88-424a-b3c3-4bafc3f1252f",
+        "portId": "demo:SCL"
+      }
+    }
+  ],
+  "boardConfiguration": {
+    "length": 100,
+    "width": 70,
+    "thickness": 1.6,
+    "layers": 2,
+    "material": "FR-4 (example)",
+    "supplyVoltage": 3.3,
+    "currentBudgetMa": 800,
+    "componentSpacing": 2,
+    "edgeClearance": 2,
+    "mountingHoles": [
+      {
+        "x": -45,
+        "z": -30,
+        "diameter": 3
+      },
+      {
+        "x": -45,
+        "z": 30,
+        "diameter": 3
+      },
+      {
+        "x": 45,
+        "z": -30,
+        "diameter": 3
+      },
+      {
+        "x": 45,
+        "z": 30,
+        "diameter": 3
+      }
+    ],
+    "restrictedRegions": []
+  },
+  "engineeringInputs": {
+    "part-bd38cf54-2396-4f98-abc0-664084b6ca73": {
+      "provenance": "demo",
+      "currentMa": 180,
+      "voltage": 3.3
+    },
+    "part-9c0f10ca-ba88-424a-b3c3-4bafc3f1252f": {
+      "provenance": "demo",
+      "currentMa": 3,
+      "voltage": 3.3
+    }
+  }
+}

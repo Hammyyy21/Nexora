@@ -1,0 +1,68 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local editor state
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local configuration and credentials; keep shareable examples
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Dependencies and common generated output
+node_modules/
+.venv/
+__pycache__/
+*.py[cod]
+/dist/
+/build/
+/coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.next/
+.nuxt/
+.output/
+.turbo/
+*.tsbuildinfo
+
+# Runtime logs
+*.log
+/playwright-report/
+/test-results/
+
+# Dependencies
+node_modules/
+.venv/
+backend/.venv/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+
+# Build and test outputs
+dist/
+coverage/
+.pytest_cache/
+
+# Temporary files
+.DS_Store
+*.bak
+*.backup
+*.zip
+
