@@ -18,7 +18,7 @@ monaco.languages.setMonarchTokensProvider('arm-assembly', {
     ],
   },
 });
-monaco.editor.defineTheme('circuitforge', {
+monaco.editor.defineTheme('nexora', {
   base: 'vs-dark',
   inherit: true,
   rules: [
