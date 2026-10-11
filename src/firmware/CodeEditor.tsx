@@ -35,7 +35,7 @@ export function CodeEditor({ value, language, readonly, onChange, navigation }: 
         );
         instance.current = monaco.editor.create(container.current, {
           model,
-          theme: 'circuitforge',
+          theme: 'nexora',
           readOnly: props.current.readonly,
           automaticLayout: true,
           minimap: { enabled: false },
