@@ -96,7 +96,7 @@ function FanPackage() {
         </group>
       ))}
       <CylinderPart radius={0.35} height={0.01} position={[0, 0.295, 0]} color="#b4c0c6" metal />
-      <PrintedText text="CircuitForge" position={[0, 0.306, 0]} width={0.51} color="#1e2b38" />
+      <PrintedText text="Nexora" position={[0, 0.306, 0]} width={0.51} color="#1e2b38" />
       {[-1.32, 1.32].flatMap((x) =>
         [-1.32, 1.32].map((z) => <Screw key={`${x}${z}`} position={[x, 0.49, z]} radius={0.105} />),
       )}
