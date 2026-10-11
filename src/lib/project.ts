@@ -7,7 +7,7 @@ import { createInstance } from '../catalog/instances';
 import { canReplace } from '../catalog/compatibility';
 import { demoProject } from '../data/demoProject';
 import type { HardwareComponent, Project, Vec3, ViewMode } from '../types/workspace';
-// Retain the legacy storage key so existing saves survive the CircuitForge rename.
+// Retain the legacy storage key so existing saves survive the Nexora rebrand.
 export const STORAGE_KEY = 'nexora.project.v1';
 export const cloneProject = (p: Project): Project => structuredClone(p);
 export function displayedPosition(c: HardwareComponent, mode: ViewMode): Vec3 {
