@@ -105,7 +105,7 @@ export function TopBar() {
                       ...s.currentProject,
                       selectedComponentId: s.selectedComponentId,
                     }),
-                    'circuitforge-project.json',
+                    'nexora-project.json',
                     'application/json',
                   );
                   s.notify('Project exported as JSON.');
