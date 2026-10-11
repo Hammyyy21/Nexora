@@ -30,7 +30,7 @@ test('catalog preview, confirmed placement, inspector, undo and local persistenc
   await page.mouse.wheel(0, -80);
   await dialog.getByRole('button', { name: 'Reset / fit preview' }).click();
   await expect(dialog.getByText('Integration: Not Yet Verified')).toBeVisible();
-  await page.screenshot({ path: 'test-results/circuitforge-component-details.png' });
+  await page.screenshot({ path: 'test-results/nexora-component-details.png' });
   await dialog.getByRole('button', { name: 'Add to Design' }).click();
   await page.getByRole('spinbutton', { name: 'Placement position X' }).fill('7');
   await page.getByRole('button', { name: 'Reset placement' }).click();
@@ -99,7 +99,7 @@ test('comparison, MCU replacement and preserved firmware source', async ({ page 
   await expect(page.locator('#firmware-view-c .monaco-editor')).toContainText('Preserve my source');
   await page.getByRole('tab', { name: 'Machine Code' }).click();
   await expect(page.getByText('00 68 70 47 01 60 70 47', { exact: true })).toBeVisible();
-  await page.screenshot({ path: 'test-results/circuitforge-replacement-firmware.png' });
+  await page.screenshot({ path: 'test-results/nexora-replacement-firmware.png' });
   expect(errors).toEqual([]);
 });
 
@@ -118,6 +118,6 @@ test('catalog filters and responsive navigation', async ({ page }) => {
     );
     await page.getByRole('navigation', { name: 'Main workspace navigation' }).getByRole('button', { name: 'AI Guide', exact: true }).click();
     await expect(page.getByRole('textbox', { name: 'Ask Demo Assistant' })).toBeInViewport();
-    await page.screenshot({ path: `test-results/circuitforge-catalog-${width}.png` });
+    await page.screenshot({ path: `test-results/nexora-catalog-${width}.png` });
   }
 });
