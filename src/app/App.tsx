@@ -43,7 +43,7 @@ export default function App() {
     }
     try {
       const a = document.createElement('a');
-      a.download = 'circuitforge-viewport.png';
+      a.download = 'nexora-viewport.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
       s.notify('Viewport exported as PNG. Labels and interface are excluded.');
