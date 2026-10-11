@@ -93,7 +93,7 @@ test('firmware edits, artifacts, resizing, and the live 3D workspace coexist', a
   await page.getByRole('button', { name: 'Fit to Model' }).click();
   await expect(canvas).toHaveAttribute('data-original-canvas', 'true');
   await page.getByRole('navigation', { name: 'Main workspace navigation' }).getByRole('button', { name: 'Code', exact: true }).click();
-  await page.screenshot({ path: 'test-results/circuitforge-firmware-machine.png' });
+  await page.screenshot({ path: 'test-results/nexora-firmware-machine.png' });
   await page.reload();
   await expect(page.getByRole('tab', { name: 'Machine Code' })).toHaveAttribute(
     'aria-selected',
@@ -104,7 +104,7 @@ test('firmware edits, artifacts, resizing, and the live 3D workspace coexist', a
   await expect(page.locator('#firmware-view-c .monaco-editor')).toBeVisible();
   await page.getByRole('button', { name: 'Copy code' }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('// browser draft:');
-  await page.screenshot({ path: 'test-results/circuitforge-firmware-c.png' });
+  await page.screenshot({ path: 'test-results/nexora-firmware-c.png' });
   expect(errors).toEqual([]);
 });
 
@@ -143,7 +143,7 @@ test('firmware assistant, component association, and responsive panel', async ({
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    await page.screenshot({ path: `test-results/circuitforge-firmware-${width}.png` });
+    await page.screenshot({ path: `test-results/nexora-firmware-${width}.png` });
   }
 });
 
