@@ -8,7 +8,11 @@ import { buildPCBConnectivity } from './pcbConnectivity';
 import './pcb-layout.css';
 
 const vertices = (points: Point[]) => points.map((p) => `${p.x},${p.z}`).join(' ');
-export function PCBLayoutPreview({ project }: { project: Project }) {
+export function PCBLayoutPreview({ project, onComponentSelect, selectedComponentId }: {
+  project: Project;
+  onComponentSelect?: (componentId: string) => void;
+  selectedComponentId?: string | null;
+}) {
   const config = project.boardConfiguration;
   const board = project.components.find((part) => part.id === 'pcb');
   const [layerFilter, setLayerFilter] = useState('all');
@@ -16,6 +20,8 @@ export function PCBLayoutPreview({ project }: { project: Project }) {
   const layers = normalizeBoard(config).stackup!.filter((layer) => layer.kind === 'copper');
   const connectivity = buildPCBConnectivity(project);
   const { pads, airwires, checks } = connectivity;
+  const selectComponent = (id: string) => (onComponentSelect ?? ((componentId: string) =>
+    useWorkspaceStore.getState().selectComponent(componentId)))(id);
   const margin = 8;
   const parts = project.components.filter((part) => part.id !== 'pcb' && part.type !== 'housing');
   const visiblePads = pads.filter((p) => p.layer?.visible && (layerFilter === 'all' || p.layerId === layerFilter));
@@ -51,7 +57,10 @@ export function PCBLayoutPreview({ project }: { project: Project }) {
         {parts.map((part) => {
           const bounds = componentOutlineOnBoard(board, part);
           const center = pointOnBoard(board, part, { x: 0, z: 0 });
-          return <g key={part.id} className="pcb-layout-part" onClick={() => useWorkspaceStore.getState().selectComponent(part.id)}>
+          return <g key={part.id} className={`pcb-layout-part${selectedComponentId === part.id ? ' selected' : ''}`}
+            role="button" tabIndex={0} aria-label={`Select ${part.reference} in PCB layout`}
+            onClick={() => selectComponent(part.id)}
+            onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectComponent(part.id); } }}>
             <title>{`${part.reference}: ${componentFootprint(part).name} (select component)`}</title>
             <polygon points={vertices(bounds)} />
             <text x={center.x} y={center.z} textAnchor="middle" fontSize="2.8">{part.reference}</text>
@@ -60,7 +69,11 @@ export function PCBLayoutPreview({ project }: { project: Project }) {
         {visiblePads.map((pad) => {
           const component = project.components.find((part) => part.id === pad.componentId)!;
           const terminal = logicalPorts(component).find((port) => port.id === pad.portId);
-          return <g key={`${pad.componentId}:${pad.id}`} className={pad.layer?.side === 'bottom' ? 'pcb-layout-pad bottom' : 'pcb-layout-pad'}>
+          return <g key={`${pad.componentId}:${pad.id}`}
+            className={pad.layer?.side === 'bottom' ? 'pcb-layout-pad bottom' : 'pcb-layout-pad'}
+            role="button" tabIndex={0} aria-label={`Inspect pad ${pad.id} on ${pad.reference}`}
+            onClick={() => selectComponent(pad.componentId)}
+            onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectComponent(pad.componentId); } }}>
             <title>{`${pad.reference} / ${pad.id} · ${pad.layer?.name ?? 'Missing copper layer'} · ${terminal?.label ?? 'Unassigned'} · ${pad.netName ?? 'No schematic net'} (not routed)`}</title>
             <polygon points={vertices(pad.outline)} />
             {pad.portId && <circle cx={pad.center.x} cy={pad.center.z} r="0.5" />}

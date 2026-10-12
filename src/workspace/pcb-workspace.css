@@ -1,0 +1,68 @@
+.pcb-workspace {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 20px clamp(12px, 2.5vw, 34px);
+  color: #e8f0ff;
+  background: #0b1422;
+}
+.pcb-workspace-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.pcb-workspace-eyebrow {
+  color: #73a8e9;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+.pcb-workspace h1 { margin: 3px 0; font-size: clamp(21px, 2vw, 28px); }
+.pcb-workspace-heading p,
+.pcb-workspace-selection { margin: 6px 0; color: #a5bcd8; font-size: 12px; line-height: 1.5; }
+.pcb-workspace-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pcb-workspace-actions button,
+.pcb-workspace-selection button,
+.pcb-workspace-empty button {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 11px;
+  border-radius: 6px;
+  border: 1px solid #3b5678;
+  background: #15273e;
+  color: #daeaff;
+  font-size: 11px;
+  cursor: pointer;
+}
+.pcb-workspace-actions button:hover,
+.pcb-workspace-selection button:hover,
+.pcb-workspace-empty button:hover { border-color: #75aef7; background: #233955; }
+.pcb-workspace-actions button:focus-visible,
+.pcb-workspace-selection button:focus-visible,
+.pcb-workspace-empty button:focus-visible { outline: 2px solid #6ab7ff; outline-offset: 2px; }
+.pcb-workspace-selection { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+.pcb-workspace-part-list { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 12px 0; }
+.pcb-workspace-part-list span { font-size: 10px; color: #9bb3cf; letter-spacing: .5px; }
+.pcb-workspace-part-list button { background: #182943; border: 1px solid #365578; color: #dbecff; border-radius: 5px; padding: 6px 10px; font-size: 11px; cursor: pointer; }
+.pcb-workspace-part-list button[aria-pressed='true'] { background: #244977; border-color: #74b2ff; }
+.pcb-workspace-part-list button:focus-visible { outline: 2px solid #74b2ff; }
+.pcb-workspace .pcb-layout-preview { margin: 0; padding: 16px; }
+.pcb-workspace .pcb-layout-preview svg { height: min(64vh, 650px); max-height: 650px; }
+.pcb-workspace .pcb-layout-preview > p { font-size: 12px; }
+.pcb-workspace .pcb-layout-preview > label { max-width: 360px; }
+.pcb-workspace .pcb-connectivity-review { margin-top: 16px; }
+.pcb-workspace .pcb-layout-part.selected polygon { stroke: #f6d17c; stroke-width: 1; }
+.pcb-workspace .pcb-layout-part:focus-visible polygon,
+.pcb-workspace .pcb-layout-pad:focus-visible polygon { stroke: #ffffff; stroke-width: 1; }
+.pcb-workspace-empty { margin-top: 24px; padding: 24px; background: #15263a; border: 1px solid #355276; border-radius: 8px; }
+.pcb-workspace-empty h2 { font-size: 16px; margin: 0 0 8px; }
+@media (max-width: 850px) {
+  .pcb-workspace { padding: 12px; }
+  .pcb-workspace .pcb-layout-preview svg { height: min(53vh, 520px); }
+}

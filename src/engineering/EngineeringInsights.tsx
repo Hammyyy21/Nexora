@@ -14,8 +14,10 @@ export function EngineeringInsights() {
   const warnings = findings.filter((f) => f.severity === 'warning').length;
   return (
     <section className="engineering-insights" aria-label="Engineering tools">
-      <h3>Engineering tools</h3>
-      <p>Concept-stage checks and a parts inventory, inspired by professional PCB workflows.</p>
+      <div className="engineering-heading">
+        <h3>Engineering tools</h3>
+        <p>Review estimated electrical properties, design warnings and the parts inventory.</p>
+      </div>
       <div className="engineering-switch" role="group" aria-label="Engineering tool">
         <button
           type="button"
@@ -37,9 +39,10 @@ export function EngineeringInsights() {
       {view === 'review' ? (
         <div className="engineering-result">
           <EngineeringInputs />
-          <p role="status">
-            {warnings} design warning(s) · {findings.length - warnings} information notice(s)
-          </p>
+          <div className="engineering-status-summary" role="status">
+            <span><strong>{warnings}</strong> design warning(s)</span>
+            <span><strong>{findings.length - warnings}</strong> information notice(s)</span>
+          </div>
           <ul className="engineering-findings">
             {findings.map((finding) => (
               <li key={finding.id}>

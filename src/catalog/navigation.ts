@@ -3,7 +3,7 @@ import { useFirmwareStore } from '../firmware/store';
 import { useWorkspaceStore } from '../store/useWorkspaceStore';
 import { getPart } from './catalog';
 import { useDesignLayout, type DesignPanel } from '../workspace/layout';
-export function navigateWorkspace(workspace: 'design' | 'schematic' | 'components' | 'code') {
+export function navigateWorkspace(workspace: 'design' | 'pcb' | 'schematic' | 'components' | 'code') {
   useDesignLayout.getState().openDrawer(null);
   useLibraryStore.getState().navigate(workspace);
   if (workspace === 'components' && useDesignLayout.getState().compact)

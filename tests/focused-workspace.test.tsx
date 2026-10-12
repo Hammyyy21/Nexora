@@ -54,7 +54,7 @@ it('uses one primary navigation and synchronizes Design, Inspector, Code and AI 
   const canvas = screen.getByLabelText('Hardware canvas');
   const nav = screen.getByRole('navigation', { name: 'Main workspace navigation' });
   expect(within(nav).getAllByRole('button').map((node) => node.textContent)).toEqual([
-    'Design', 'Schematic', 'Inspector', 'Workspace', 'Code', 'Components', 'AI Guide',
+    'Design', 'PCB Layout', 'Schematic', 'Inspector', 'Workspace', 'Code', 'Components', 'AI Guide',
   ]);
   expect(screen.queryByRole('tablist', { name: 'Design panels' })).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: /Microcontroller U1/ }));

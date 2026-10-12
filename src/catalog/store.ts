@@ -20,7 +20,7 @@ export function loadLibraryFilters(): CatalogFilters {
   return { ...emptyFilters };
 }
 interface LibraryState {
-  workspace: 'design' | 'schematic' | 'components' | 'code';
+  workspace: 'design' | 'pcb' | 'schematic' | 'components' | 'code';
   filters: CatalogFilters;
   detailId: string | null;
   compareIds: string[];

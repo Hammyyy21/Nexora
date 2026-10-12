@@ -160,7 +160,7 @@ export function WorkspaceHeader() {
       <div className="breadcrumb">
         <span>Workspace</span>
         <span className="slash">/</span>
-        <strong>{workspace === 'components' ? 'Hardware library' : workspace === 'schematic' ? '2D schematic' : '3D design'}</strong>
+        <strong>{workspace === 'components' ? 'Hardware library' : workspace === 'schematic' ? '2D schematic' : workspace === 'pcb' ? 'PCB layout' : '3D design'}</strong>
       </div>
       <nav
         className="main-navigation"
@@ -180,6 +180,7 @@ export function WorkspaceHeader() {
       >
         {([
           ['design', 'Design', 'explorer'],
+          ['pcb', 'PCB Layout', null],
           ['schematic', 'Schematic', null],
           ['inspector', 'Inspector', 'inspector'],
           ['workspace', 'Workspace', 'workspace'],
@@ -187,7 +188,7 @@ export function WorkspaceHeader() {
           ['components', 'Components', null],
           ['ai', 'AI Guide', 'ai'],
         ] as const).map(([view, label, panel]) => {
-          const active = (view === 'components' || view === 'schematic')
+          const active = (view === 'components' || view === 'schematic' || view === 'pcb')
             ? workspace === view
             : workspace !== 'components' && workspace !== 'schematic' && layout.panel === panel;
           const dockOpen = panel !== null && workspace !== 'components' && workspace !== 'schematic' && layout.panel === panel && !layout.collapsed;
@@ -202,7 +203,7 @@ export function WorkspaceHeader() {
                 if (view === 'design') {
                   navigateWorkspace('design');
                   openToolPanel('explorer');
-                } else if (view === 'components' || view === 'schematic') navigateWorkspace(view);
+                } else if (view === 'components' || view === 'schematic' || view === 'pcb') navigateWorkspace(view);
                 else if (view === 'code') navigateWorkspace('code');
                 else openToolPanel(panel!);
               }}

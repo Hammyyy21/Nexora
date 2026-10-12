@@ -1,5 +1,6 @@
 import { ViewModeSelector } from '../components/workspace/WorkspaceToolbar';
 import { SchematicWorkspace } from '../schematic/SchematicWorkspace';
+import { PCBWorkspace } from '../workspace/PCBWorkspace';
 import { ProjectDashboard } from '../projects/ProjectDashboard';
 import { hydrateActiveProject, flushProjects } from '../projects/store';
 import { DesignDrawer } from '../workspace/DesignDrawer';
@@ -61,8 +62,8 @@ export default function App() {
         <WorkspaceHeader />
         <div className="workspace-layout">
           <main
-            className={`design-shell ${workspace === 'components' || workspace === 'schematic' ? 'workspace-hidden' : ''}`}
-            inert={workspace === 'components' || workspace === 'schematic'}
+            className={`design-shell ${workspace === 'components' || workspace === 'schematic' || workspace === 'pcb' ? 'workspace-hidden' : ''}`}
+            inert={workspace === 'components' || workspace === 'schematic' || workspace === 'pcb'}
             aria-label="3D design workspace"
           >
             <ViewModeSelector />
@@ -84,6 +85,7 @@ export default function App() {
             </div>
           )}
           {workspace === 'schematic' && <SchematicWorkspace />}
+          {workspace === 'pcb' && <PCBWorkspace />}
           <ToolsPanel onScreenshot={screenshot} />
         </div>
         <DesignDrawer />
