@@ -9,7 +9,7 @@ export function ViewportOverlay() {
           <span className="live-dot" />
           LIVE WORKSPACE
         </div>
-        <h1>Smart Cooling Controller</h1>
+        <h1>{s.currentProject.name}</h1>
         <p>Hardware, from a different perspective.</p>
       </div>
       <div className="view-cube" aria-label="Camera views">

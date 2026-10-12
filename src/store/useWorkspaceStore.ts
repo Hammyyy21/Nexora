@@ -80,7 +80,7 @@ interface WorkspaceState {
     patch: Partial<
       Pick<
         HardwareComponent,
-        'position' | 'rotation' | 'material' | 'color' | 'opacity' | 'visible'
+        'position' | 'rotation' | 'material' | 'color' | 'opacity' | 'visible' | 'name'
       >
     >,
   ) => void;
@@ -480,6 +480,12 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const s = get();
     const c = s.currentProject.components.find((item) => item.id === id);
     if (!c) return;
+    if (patch.name !== undefined &&
+      (id !== 'pcb' || typeof patch.name !== 'string' || !patch.name.trim() || patch.name.length > 100)) {
+      set({ notice: 'Board name must contain 1–100 characters.' });
+      return;
+    }
+    if (patch.name) patch = { ...patch, name: patch.name.trim() };
     if (patch.rotation?.some((n) => !Number.isFinite(n) || Math.abs(n) > 360)) {
       set({ notice: 'Enter finite rotations between −360 and 360 degrees.' });
       return;

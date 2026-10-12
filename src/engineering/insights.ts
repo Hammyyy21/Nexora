@@ -4,6 +4,7 @@ import { placedPads } from '../workspace/pcbLayout';
 import { boardSpecification } from '../workspace/boardSpecifications';
 import { getPart } from '../catalog/catalog';
 import { reviewElectrical } from './electrical';
+import { buildPCBConnectivity } from '../workspace/pcbConnectivity';
 import { assessPosition } from '../lib/transforms';
 import type { Project } from '../types/workspace';
 
@@ -188,6 +189,19 @@ export function reviewDesign(project: Project): DesignFinding[] {
       title: 'Demo check · layout crowding',
       details: `Summed footprint area / board area: ${(occupancy * 100).toFixed(0)}%. Example crowding threshold: 70%; overlaps and off-board components are included.`,
       remedy: 'Spread components across available placement regions or select a larger board.',
+    });
+  }
+  // B2 review is advisory until actual copper traces, vias and fabrication rules exist.
+  const pcb = buildPCBConnectivity(project);
+  for (const finding of pcb.checks) {
+    findings.push({
+      id: finding.id, severity: finding.severity,
+      ...(finding.severity === 'warning' ? { status: 'fail' as const } : {}),
+      title: finding.title, details: finding.detail,
+      ...(finding.componentIds[0] ? { componentId: finding.componentIds[0] } : {}),
+      remedy: finding.kind === 'unrouted'
+        ? 'Verify schematic terminals and pad assignments, then route with validated copper tools when available.'
+        : 'Review explicit net, layer, side and pad geometry assignments. Check against verified fabrication requirements.',
     });
   }
   findings.push(...reviewElectrical(project));

@@ -17,3 +17,15 @@
 .pcb-pad-editor { border: 1px solid #33455f; padding: 8px; margin: 10px 0; }
 .pcb-pad-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(94px, 1fr)); gap: 8px; margin: 10px 0; border-bottom: 1px solid #31435d; }
 .pcb-pad-row label { margin: 0 0 8px; }
+
+.pcb-airwire { stroke: #f6ce75; stroke-width: .45; stroke-dasharray: 2 1.3; pointer-events: none; }
+.pcb-airwire.needs-via { stroke: #f49c9c; stroke-dasharray: 1 1; }
+.pcb-connectivity-review { margin: 10px 0; border-top: 1px solid #31435d; padding-top: 9px; color: #bfcfdf; font-size: 11px; }
+.pcb-connectivity-review summary { cursor: pointer; }
+.pcb-connectivity-review li { margin: 6px 0; line-height: 1.5; }
+.tree-root-row { display: flex; align-items: flex-start; }
+.tree-root-row .tree-root { min-width: 0; width: auto; flex: 1; }
+.tree-root-row .tree-root span { overflow: hidden; text-overflow: ellipsis; }
+.tree-root-row .tree-rename { flex-shrink: 0; }
+.tree-rename { background: transparent; color: #9fb0c6; border: 0; padding: 4px 10px; cursor: pointer; }
+.tree-rename:hover { color: white; }

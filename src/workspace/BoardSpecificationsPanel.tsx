@@ -193,6 +193,22 @@ export function BoardSpecifications({
     </section>
   );
 }
+function PCBNameEditor({ component }: { component: HardwareComponent }) {
+  const [value, setValue] = useState(component.name);
+  const save = () => {
+    const name = value.trim();
+    if (name && name.length <= 100 && name !== component.name)
+      useWorkspaceStore.getState().editComponent(component.id, { name });
+  };
+  return (
+    <form className="board-configuration" aria-label="Rename PCB" onSubmit={(e) => { e.preventDefault(); save(); }}>
+      <label>Board name (independent of project name)
+        <input aria-label="Board name" value={value} maxLength={100} onChange={(e) => setValue(e.target.value)} />
+      </label>
+      <button className="button" type="submit" disabled={!value.trim() || value.trim() === component.name}>Rename board</button>
+    </form>
+  );
+}
 export function SelectedBoardSpecifications({
   project,
   component,
@@ -205,6 +221,7 @@ export function SelectedBoardSpecifications({
   return (
     <>
       <BoardSpecifications spec={spec} component={component} />
+      {component.id === 'pcb' && <PCBNameEditor key={component.id + ':' + component.name} component={component} />}
       {component.id === 'pcb' && <PCBLayoutPreview project={project} />}
       {component.id === 'pcb' && (
         <BoardConfigurationEditor

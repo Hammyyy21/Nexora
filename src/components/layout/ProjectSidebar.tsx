@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useProjectsStore } from '../../projects/store';
 import { useDesignLayout } from '../../workspace/layout';
 import {
   Box,
@@ -12,6 +13,7 @@ import {
   Layers3,
   Plug,
   Search,
+  Pencil,
   SlidersHorizontal,
   Thermometer,
   Zap,
@@ -89,6 +91,7 @@ export function ProjectSidebar() {
         <kbd>⌕</kbd>
       </label>
       <div className="project-tree">
+        <div className="tree-root-row">
         <button
           className="tree-root"
           onClick={() => setRootOpen(!rootOpen)}
@@ -96,8 +99,15 @@ export function ProjectSidebar() {
         >
           {rootOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           <Box size={16} />
-          <span>Smart Cooling Controller</span>
+          <span>{s.currentProject.name}</span>
         </button>
+        <button type="button" className="tree-rename" aria-label="Rename current project"
+          title="Rename current project"
+          onClick={() => {
+            const name = window.prompt('Project name', s.currentProject.name);
+            if (name !== null) useProjectsStore.getState().rename(s.currentProject.id, name);
+          }}><Pencil size={13}/></button>
+        </div>
         {(rootOpen || query) &&
           (['structure', 'active', 'connectors', 'passives'] as const).map((group) => {
             const items = s.currentProject.components.filter(
@@ -149,7 +159,9 @@ export function ProjectSidebar() {
         </div>
         <div className="project-facts">
           <span>
-            BOARD SIZE<strong>92 × 64 mm</strong>
+            BOARD SIZE<strong>{s.currentProject.boardConfiguration ?
+              `${s.currentProject.boardConfiguration.length} × ${s.currentProject.boardConfiguration.width} mm` :
+              'Not configured'}</strong>
           </span>
           <span>
             COMPONENTS<strong>{s.currentProject.components.length} objects</strong>

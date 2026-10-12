@@ -377,11 +377,13 @@ export function InspectorPanel() {
                 <h3>Project overview</h3>
                 <div className="overview-row">
                   <span>Assembly</span>
-                  <strong>Cooling controller</strong>
+                  <strong>{s.currentProject.name}</strong>
                 </div>
                 <div className="overview-row">
                   <span>Board dimensions</span>
-                  <strong>92 × 64 mm</strong>
+                  <strong>{s.currentProject.boardConfiguration ?
+                    `${s.currentProject.boardConfiguration.length} × ${s.currentProject.boardConfiguration.width} mm` :
+                    'Not configured'}</strong>
                 </div>
                 <div className="overview-row">
                   <span>Objects</span>

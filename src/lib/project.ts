@@ -152,6 +152,8 @@ export function parseProject(text: string): Project {
       id: c.id,
       // Preserve copied/catalog designators on export/import, not only concept copies.
       ...(c.conceptSourceId ? { conceptSourceId: c.conceptSourceId, name: c.name } : {}),
+      // Board is user-owned geometry: preserve its independent display name across JSON and local archives.
+      ...(c.id === 'pcb' ? { name: c.name } : {}),
       reference: c.conceptSourceId ? c.reference : base.reference,
       ...(c.side ? { side: c.side } : {}),
       ...(c.footprint ? { footprint: c.footprint } : {}),
