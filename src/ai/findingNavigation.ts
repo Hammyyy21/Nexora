@@ -3,6 +3,7 @@ import { useDesignLayout } from '../workspace/layout';
 import { navigateWorkspace } from '../catalog/navigation';
 import { useFirmwareStore } from '../firmware/store';
 import { workspaceNets, type EntityRef } from './snapshot';
+import { endpointKey } from '../schematic/model';
 export function navigateFinding(entity: EntityRef): boolean {
   const s = useWorkspaceStore.getState(),
     p = s.currentProject;
@@ -14,7 +15,14 @@ export function navigateFinding(entity: EntityRef): boolean {
   } else if (entity.kind === 'net') {
     const net = workspaceNets(p).find((n) => n.id === entity.id);
     if (!net) return false;
-    s.selectComponent(net.terminals[0].split(':')[0]);
+    // Resolve from typed project connections, not a colon-delimited net key.
+    // Physical pin IDs contain colons and should never require string parsing.
+    const endpoint = (p.connections ?? [])
+      .flatMap((wire) => [wire.from, wire.to])
+      .find((point) => net.terminals.includes(endpointKey(point)) &&
+        p.components.some((component) => component.id === point.componentId));
+    if (!endpoint) return false;
+    s.selectComponent(endpoint.componentId);
     navigateWorkspace('schematic');
   } else if (entity.kind === 'region') {
     if (

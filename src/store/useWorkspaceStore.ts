@@ -1,4 +1,4 @@
-import { applyPCBOperation, type PCBOperation } from '../workspace/pcbOperations';
+import { applyPCBOperation, boardPlacementIssues, type PCBOperation } from '../workspace/pcbOperations';
 import { snapPosition } from '../workspace/boardGeometry';
 import { assessPosition, movable, validPosition } from '../lib/transforms';
 import { getPart } from '../catalog/catalog';
@@ -112,9 +112,17 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       const s=get();
       if(s.componentDrag || s.placement) throw new Error('Finish or cancel the current placement first.');
       const currentProject=applyPCBOperation(s.currentProject,operation);
+      const placementIssues = operation.type === 'configure_board'
+        ? boardPlacementIssues(currentProject)
+        : [];
+      const notice = operation.type === 'configure_board'
+        ? placementIssues.length
+          ? `Board updated. ${placementIssues.length} component(s) need placement review in Engineering Review; none were moved.`
+          : 'Board updated. Current component placements have no board-rule violations.'
+        : 'PCB edit applied. Review engineering findings for geometric and electrical constraints.';
       set({currentProject, selectedComponentId:currentProject.selectedComponentId ?? s.selectedComponentId,
         undoHistory:[...s.undoHistory.slice(-49),cloneProject(s.currentProject)],redoHistory:[],
-        notice:'PCB edit applied. Review engineering findings for geometric and electrical constraints.'});
+        notice});
       return true;
     } catch(e) { set({notice:(e as Error).message}); return false; }
   },

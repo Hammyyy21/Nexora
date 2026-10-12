@@ -150,7 +150,9 @@ export function parseProject(text: string): Project {
     components.push({
       ...base,
       id: c.id,
-      ...(c.conceptSourceId ? { conceptSourceId: c.conceptSourceId, name: c.name, reference: c.reference } : {}),
+      // Preserve copied/catalog designators on export/import, not only concept copies.
+      ...(c.conceptSourceId ? { conceptSourceId: c.conceptSourceId, name: c.name } : {}),
+      reference: c.conceptSourceId ? c.reference : base.reference,
       ...(c.side ? { side: c.side } : {}),
       ...(c.footprint ? { footprint: c.footprint } : {}),
       ...(c.id === 'pcb' && p.boardTemplateId !== 'cooling-demo' && p.boardConfiguration

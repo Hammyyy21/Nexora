@@ -104,7 +104,7 @@ export function reviewDesign(project: Project): DesignFinding[] {
         'These objects have no exact manufacturer part mapping. Select actual catalog parts before purchasing or fabricating.',
     });
   for (const component of project.components) {
-    if (component.id === 'pcb' || component.fixed || component.type === 'housing') continue;
+    if (component.id === 'pcb' || component.type === 'housing') continue;
     const assessment = assessPosition(project, component, component.position);
     if (!assessment.valid)
       findings.push({

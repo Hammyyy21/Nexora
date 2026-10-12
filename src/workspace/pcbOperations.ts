@@ -21,6 +21,24 @@ export type PCBOperation =
       footprint?: Footprint;
     }
   | { type: 'duplicate_component'; component_id: string };
+/** Board-related placement violations after edits or project import.
+ * The user's geometry is never silently moved or discarded. Collision-only
+ * warnings remain in the normal engineering review rather than this count. */
+export function boardPlacementIssues(project: Project) {
+  return project.components
+    .filter((c) => c.id !== 'pcb' && c.type !== 'housing')
+    .flatMap((component) => {
+      const assessment = assessPosition(project, component, component.position);
+      const boardWarnings = assessment.warnings.filter((warning) =>
+        /PCB outline|PCB surface|mounting hole|restricted region|rounded PCB corner/i.test(warning),
+      );
+      const issues = [...(assessment.error ? [assessment.error] : []), ...boardWarnings];
+      return issues.length
+        ? [{ componentId: component.id, reference: component.reference, issues }]
+        : [];
+    });
+}
+
 /** Pure transaction: failure cannot mutate the caller or leave a partial edit. */
 export function applyPCBOperation(current: Project, op: PCBOperation): Project {
   const p = migrateProject(current);
@@ -42,10 +60,16 @@ export function applyPCBOperation(current: Project, op: PCBOperation): Project {
   if (!c || !movable(c)) throw new Error('Target component is missing or fixed.');
   if (op.type === 'duplicate_component') {
     if (p.components.length >= 64) throw new Error('Project has reached its 64-component limit.');
+    // Retain a recognizable root while allocating a unique designator, even
+    // when users duplicate a duplicate. Match case-insensitively for clarity.
+    const root = c.reference.replace(/-COPY\d+$/i, '').slice(0, 60);
+    const used = new Set(p.components.map((item) => item.reference.toUpperCase()));
+    let suffix = 1;
+    while (used.has(`${root}-COPY${suffix}`.toUpperCase())) suffix++;
     const copy: HardwareComponent = {
       ...structuredClone(c),
       id: `part-${crypto.randomUUID()}`,
-      reference: `${c.reference.slice(0, 60)}-COPY`,
+      reference: `${root}-COPY${suffix}`,
       ...(!c.catalogId ? { conceptSourceId: c.conceptSourceId ?? c.id } : {}),
     };
     copy.position = snapPosition(p, [
