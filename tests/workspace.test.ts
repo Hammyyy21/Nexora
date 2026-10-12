@@ -1,3 +1,4 @@
+import { migrateProject } from '../src/workspace/migrations';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useWorkspaceStore as store } from '../src/store/useWorkspaceStore';
 import {
@@ -87,7 +88,7 @@ describe('project files and local persistence', () => {
     p.components[1].position = [2, 3, 4];
     p.components[1].visible = false;
     p.components[1].opacity = 0.4;
-    expect(parseProject(serializeProject(p))).toEqual(p);
+    expect(parseProject(serializeProject(p))).toEqual(migrateProject(p));
   });
   it('saves and explicitly loads locally with undo', () => {
     store.getState().editComponent('sensor', { color: '#aabbcc' });
@@ -143,7 +144,7 @@ describe('project files and local persistence', () => {
       demoProject.components[0].dimensions,
     );
     saveProject(demoProject);
-    expect(loadProject()).toEqual(demoProject);
+    expect(loadProject()).toEqual(migrateProject(demoProject));
   });
 });
 describe('local demo commands', () => {

@@ -1,3 +1,4 @@
+import { migrateProject } from '../workspace/migrations';
 import { presetBoardConfiguration } from '../workspace/boardSpecifications';
 import { suggestPlacements } from '../engineering/placement';
 import { validateConnection } from '../schematic/model';
@@ -113,7 +114,7 @@ export function createProject(name: string, template: TemplateId = 'blank'): Pro
       ambientC: 25,
       maxTemperatureC: 80,
     };
-    return p;
+    return migrateProject(p);
   }
   const board = { ...structuredClone(demoProject.components[0]), fixed: true };
   const components: HardwareComponent[] = [board];
@@ -157,7 +158,7 @@ export function createProject(name: string, template: TemplateId = 'blank'): Pro
       },
     };
   }
-  return project;
+  return migrateProject(project);
 }
 function addWire(project: Project, a: string, ap: string, b: string, bp: string) {
   const from = { componentId: a, portId: ap },

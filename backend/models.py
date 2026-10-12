@@ -1,3 +1,4 @@
+from backend.workspace_models import WorkspaceSnapshot, BoardConfiguration, Footprint, FindingExplanation
 from typing import Literal
 import math
 
@@ -37,7 +38,7 @@ class ProjectComponent(StrictModel):
 
 
 class DesignAction(StrictModel):
-    type: Literal["add_component", "move_component", "remove_component", "select_component", "create_project", "connect_components", "generate_firmware", "review_project", "show_specifications", "suggest_placements"]
+    type: Literal["add_component", "move_component", "remove_component", "select_component", "create_project", "connect_components", "generate_firmware", "review_project", "show_specifications", "suggest_placements", "configure_board", "update_component", "duplicate_component"]
     component_id: str | None = Field(default=None, max_length=100)
     catalog_id: str | None = Field(default=None, max_length=100)
     position: tuple[float, float, float] | None = None
@@ -49,9 +50,15 @@ class DesignAction(StrictModel):
     target_port_id: str | None = Field(default=None, max_length=100)
     source: str | None = Field(default=None, max_length=20000)
 
+    configuration: BoardConfiguration | None = None
+    rotation: tuple[float, float, float] | None = None
+    side: Literal['top', 'bottom'] | None = None
+    footprint: Footprint | None = None
+
     @model_validator(mode="after")
     def specific_fields(self):
         allowed = {
+            'configure_board': {'configuration'}, 'update_component': {'component_id', 'rotation', 'side', 'footprint'}, 'duplicate_component': {'component_id'},
             "add_component": {"catalog_id", "position"}, "move_component": {"component_id", "position"},
             "remove_component": {"component_id"}, "select_component": {"component_id"},
             "create_project": {"template_id", "project_name"},
@@ -75,6 +82,14 @@ class DesignAction(StrictModel):
             raise ValueError("Connection requires two component and port IDs")
         if self.type == "generate_firmware" and (not self.component_id or not self.source or not self.source.strip()):
             raise ValueError("Firmware requires a controller and source")
+        if self.type == 'configure_board' and self.configuration is None:
+            raise ValueError('Board configuration required')
+        if self.type in ('update_component', 'duplicate_component') and not self.component_id:
+            raise ValueError('Existing component required')
+        if self.type == 'update_component' and self.rotation is None and self.side is None and self.footprint is None:
+            raise ValueError('Component edit required')
+        if self.rotation is not None and not all(math.isfinite(n) and abs(n) <= 360 for n in self.rotation):
+            raise ValueError('Invalid rotation')
         return self
 
 
@@ -90,6 +105,7 @@ class Connection(StrictModel):
 
 
 class Context(StrictModel):
+    workspace_snapshot: WorkspaceSnapshot | None = None
     connections: list[Connection] | None = Field(default=None, max_length=128)
     board_summary: str | None = Field(default=None, max_length=6000)
     project_name: str | None = Field(default=None, max_length=120)
@@ -124,7 +140,7 @@ class ChatRequest(StrictModel):
 # This DTO is never trusted as an executable action: below we re-parse through
 # GuideAnswer / DesignAction with all local validation rules still in place.
 class AIActionOutput(StrictModel):
-    type: Literal["add_component", "move_component", "remove_component", "select_component", "create_project", "connect_components", "generate_firmware", "review_project", "show_specifications", "suggest_placements"]
+    type: Literal["add_component", "move_component", "remove_component", "select_component", "create_project", "connect_components", "generate_firmware", "review_project", "show_specifications", "suggest_placements", "configure_board", "update_component", "duplicate_component"]
     # All keys are required in the wire protocol, but nullable. The model
     # must emit null for arguments not used by an action.
     component_id: str | None
@@ -136,9 +152,34 @@ class AIActionOutput(StrictModel):
     target_component_id: str | None
     target_port_id: str | None
     source: str | None
+    configuration: BoardConfiguration | None = None
+    rotation: list[float] | None = None
+    side: Literal['top', 'bottom'] | None = None
+    footprint: Footprint | None = None
 
 
 class AIResponseOutput(StrictModel):
+    @classmethod
+    def model_json_schema(cls, *args, **kwargs):
+        # Keep the wire schema portable across the configured SDK/model. The
+        # application DTOs still enforce all bounds after parsing the response.
+        schema = super().model_json_schema(*args, **kwargs)
+        def simplify(node):
+            if isinstance(node, dict):
+                for key in ('default', 'minLength', 'maxLength', 'minItems', 'maxItems', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'pattern'):
+                    node.pop(key, None)
+                if node.get('type') == 'object':
+                    node['required'] = list(node.get('properties', {}))
+                    node['additionalProperties'] = False
+                for value in node.values():
+                    simplify(value)
+            elif isinstance(node, list):
+                for value in node:
+                    simplify(value)
+        simplify(schema)
+        return schema
+
+    findings: list[FindingExplanation] = Field(default_factory=list, max_length=32)
     answer: str
     missing_data: list[str]
     unverified_recommendations: list[str]
@@ -148,6 +189,7 @@ class AIResponseOutput(StrictModel):
 
 # Actions are proposals only. No model output is executed on the backend.
 class GuideAnswer(StrictModel):
+    findings: list[FindingExplanation] = Field(default_factory=list, max_length=32)
     answer: str
     missing_data: list[str]
     unverified_recommendations: list[str]

@@ -1,5 +1,6 @@
 import { parseAIAction, type AIAction } from './actions';
 export interface ChatContext {
+  workspace_snapshot?: import('./snapshot').WorkspaceSnapshot;
   board_summary?: string;
   connections?: import('../types/workspace').SchematicConnection[];
   project_name?: string;
@@ -17,6 +18,7 @@ export interface ChatContext {
   }[];
 }
 export interface GuideResponse {
+  findings?: { evidence_id: string; explanation: string; next_step: string }[];
   actions?: AIAction[];
   mode: 'ai';
   request_id: string;
@@ -113,6 +115,7 @@ export async function askGuide(
     response_length: responseLength,
   });
   if (
+    (data.findings !== undefined && (!Array.isArray(data.findings) || data.findings.length > 32 || data.findings.some((f: { evidence_id?: unknown; explanation?: unknown; next_step?: unknown }) => !f || typeof f.evidence_id !== 'string' || typeof f.explanation !== 'string' || typeof f.next_step !== 'string' || f.explanation.length > 2000 || f.next_step.length > 1000))) ||
     data?.mode !== 'ai' ||
     typeof data.answer !== 'string' ||
     typeof data.notice !== 'string' ||

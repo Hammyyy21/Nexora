@@ -5,6 +5,9 @@ export const placementOrigin: Vec3 = [6, 1, 0];
 export function createInstance(part: CatalogPart, id: string): HardwareComponent {
   return {
     id,
+    side: 'top',
+    footprint: { name: 'Visual bounds', length: boardVisualSize(part.id, part.visualSize)[0] * 10,
+      width: boardVisualSize(part.id, part.visualSize)[2] * 10, provenance: 'visual-estimate' },
     catalogId: part.id,
     integration: 'visual-only',
     initialPosition: [...placementOrigin],

@@ -1,3 +1,5 @@
+import { migrateProject } from '../workspace/migrations';
+import { validFootprint } from '../workspace/boardGeometry';
 import { validPosition } from './transforms';
 import { validateConnection } from '../schematic/model';
 import { getPart } from '../catalog/catalog';
@@ -30,7 +32,7 @@ export function parseProject(text: string): Project {
   }
   if (
     !p ||
-    ![1, 2].includes(p.schemaVersion) ||
+    ![1, 2, 3].includes(p.schemaVersion) ||
     typeof p.id !== 'string' ||
     !/^[a-zA-Z0-9-]{1,100}$/.test(p.id) ||
     typeof p.name !== 'string' ||
@@ -41,7 +43,7 @@ export function parseProject(text: string): Project {
     (p.schemaVersion === 1 &&
       (p.id !== demoProject.id || p.components.length !== demoProject.components.length))
   )
-    throw new Error('Invalid Nexora project (schema version 1 or 2).');
+    throw new Error('Invalid Nexora project (schema version 1, 2 or 3).');
   if (p.placementMode !== undefined && !['free', 'board'].includes(p.placementMode))
     throw new Error('Unsupported placement mode.');
   if (
@@ -88,7 +90,7 @@ export function parseProject(text: string): Project {
     throw new Error('Unsupported PCB template.');
   if (
     p.boardConfiguration !== undefined &&
-    (p.schemaVersion !== 2 || !validBoardConfiguration(p.boardConfiguration))
+    (p.schemaVersion === 1 || !validBoardConfiguration(p.boardConfiguration))
   )
     throw new Error('Invalid board configuration.');
   if (
@@ -103,11 +105,12 @@ export function parseProject(text: string): Project {
     throw new Error('Invalid saved board configurations.');
   const components: HardwareComponent[] = [];
   for (const c of p.components) {
-    const original = demoProject.components.find((b) => b.id === c?.id);
+    const original = demoProject.components.find((b) => b.id === (c?.conceptSourceId ?? c?.id));
+    if (c?.conceptSourceId && (p.schemaVersion !== 3 || c.id === 'pcb' || !/^part-[a-zA-Z0-9-]{1,80}$/.test(c.id) || !original || original.id === 'pcb' || original.type === 'housing')) throw new Error('Invalid concept copy.');
     const catalogPart = getPart(c?.catalogId);
     if (
       !c ||
-      (c.catalogId && (p.schemaVersion !== 2 || !catalogPart?.insertionSupported)) ||
+      (c.catalogId && (p.schemaVersion === 1 || !catalogPart?.insertionSupported)) ||
       (!original && (!catalogPart || !/^part-[a-zA-Z0-9-]{1,80}$/.test(c.id))) ||
       (original && catalogPart && !canReplace(original, catalogPart))
     )
@@ -117,6 +120,8 @@ export function parseProject(text: string): Project {
       : original!;
     if (
       !base ||
+      (c.side !== undefined && !['top','bottom'].includes(c.side)) ||
+      (c.footprint !== undefined && !validFootprint(c.footprint)) ||
       ids.has(c.id) ||
       c.type !== base.type ||
       c.group !== base.group ||
@@ -144,6 +149,10 @@ export function parseProject(text: string): Project {
     ids.add(c.id);
     components.push({
       ...base,
+      id: c.id,
+      ...(c.conceptSourceId ? { conceptSourceId: c.conceptSourceId, name: c.name, reference: c.reference } : {}),
+      ...(c.side ? { side: c.side } : {}),
+      ...(c.footprint ? { footprint: c.footprint } : {}),
       ...(c.id === 'pcb' && p.boardTemplateId !== 'cooling-demo' && p.boardConfiguration
         ? {
             dimensions: [
@@ -173,7 +182,7 @@ export function parseProject(text: string): Project {
   // rather than silently dropping malformed/dangling wires on import.
   let safeConnections: Project['connections'];
   if (p.connections !== undefined) {
-    if (p.schemaVersion !== 2 || !Array.isArray(p.connections) || p.connections.length > 128)
+    if (p.schemaVersion === 1 || !Array.isArray(p.connections) || p.connections.length > 128)
       throw new Error('Invalid schematic connections.');
     const checked: Project = { ...p, components, connections: [] };
     const connectionIds = new Set<string>();
@@ -208,7 +217,7 @@ export function parseProject(text: string): Project {
     )
   )
     throw new Error('Invalid firmware target.');
-  return {
+  return migrateProject({
     ...p,
     schemaVersion: p.schemaVersion,
     ...(p.placementMode ? { placementMode: p.placementMode } : {}),
@@ -220,7 +229,7 @@ export function parseProject(text: string): Project {
       ? { selectedComponentId: ids.has(p.selectedComponentId ?? '') ? p.selectedComponentId : null }
       : {}),
     ...(p.firmwareTargetId ? { firmwareTargetId: p.firmwareTargetId } : {}),
-  };
+  });
 }
 export const serializeProject = (p: Project) => JSON.stringify(p, null, 2);
 export function saveProject(p: Project) {

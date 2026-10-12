@@ -1,3 +1,4 @@
+import { migrateProject } from '../src/workspace/migrations';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -35,7 +36,7 @@ describe('visual placement and replacement', () => {
     workspace.getState().confirmPlacement();
     const s = workspace.getState(),
       part = s.currentProject.components.at(-1)!;
-    expect(s.currentProject.schemaVersion).toBe(2);
+    expect(s.currentProject.schemaVersion).toBe(3);
     expect(part.position).toEqual([7, 2, 1]);
     expect(part.integration).toBe('visual-only');
     expect(part.catalogId).toBe('tmp102');
@@ -128,8 +129,8 @@ describe('schema compatibility', () => {
     expect(loadLibraryFilters()).toMatchObject({ query: '', category: 'all' });
     expect(workspace.getState().currentProject).toEqual(demoProject);
   });
-  it('reads v1 unchanged and normalizes v2 instances against authoritative catalog data', () => {
-    expect(parseProject(serializeProject(demoProject))).toEqual(demoProject);
+  it('migrates v1 geometry unchanged and normalizes v2 instances against authoritative catalog data', () => {
+    expect(parseProject(serializeProject(demoProject))).toEqual(migrateProject(demoProject));
     workspace.getState().beginPlacement('tmp102');
     workspace.getState().confirmPlacement();
     const modified = cloneProject(workspace.getState().currentProject);

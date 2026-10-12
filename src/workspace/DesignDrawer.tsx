@@ -1,5 +1,6 @@
 import { BoardSpecifications, fieldText } from './BoardSpecificationsPanel';
 import {
+  defaultBoardConfiguration,
   developmentBoardSpecifications,
   specificationStatus,
   templateSpecification,
@@ -61,6 +62,7 @@ export function DesignDrawer() {
             Concept PCB templates · no electrical validation. Changing the board preserves
             components and C source. Undo is available.
           </p>
+          <button className="button" onClick={()=>{s.configureBoard({...defaultBoardConfiguration(),outline:{kind:'rectangle'},mountingHoles:[]});s.selectComponent('pcb');layout.setPanel('inspector');close();}}>Create custom PCB</button>
           <section className="board-comparison" aria-label="Compare board specifications">
             <h3>Compare Board Specifications</h3>
             <div>

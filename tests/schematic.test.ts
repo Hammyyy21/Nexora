@@ -1,3 +1,4 @@
+import { migrateProject } from '../src/workspace/migrations';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { demoProject } from '../src/data/demoProject';
 import { cloneProject, parseProject, serializeProject } from '../src/lib/project';
@@ -22,9 +23,9 @@ describe('Phase 2 logical schematic foundation', () => {
     const s = workspace.getState();
     expect(s.connectPorts(sensor, mcu)).toBeNull();
     let project = workspace.getState().currentProject;
-    expect(project.schemaVersion).toBe(2);
+    expect(project.schemaVersion).toBe(3);
     expect(project.connections).toHaveLength(1);
-    expect(parseProject(serializeProject(project))).toEqual(project);
+    expect(parseProject(serializeProject(project))).toEqual(migrateProject(project));
     expect(electricalNets(project)).toHaveLength(1);
     expect(electricalNets(project)[0].terminals).toEqual(expect.arrayContaining([endpointKey(sensor), endpointKey(mcu)]));
     expect(workspace.getState().undoHistory).toHaveLength(1);

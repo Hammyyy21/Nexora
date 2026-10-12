@@ -1,3 +1,4 @@
+import { validBoardExtensions, type BoardOutline, type BoardLayer, type BoardSide } from './boardGeometry';
 import parts from '../catalog/parts';
 import type { HardwareComponent, Project, Vec3 } from '../types/workspace';
 import { boardTemplates, type BoardTemplateId } from './boardTemplates';
@@ -10,11 +11,14 @@ export interface BoardField<T = string | number> {
   note?: string;
 }
 export interface MountingHole {
+  id?: string;
   x: number;
   z: number;
   diameter: number;
 }
 export interface RestrictedRegion {
+  id?: string;
+  side?: BoardSide | "all";
   name: string;
   x: number;
   z: number;
@@ -22,6 +26,11 @@ export interface RestrictedRegion {
   width: number;
 }
 export interface BoardConfiguration {
+  outline?: BoardOutline;
+  coordinates?: { units: "mm"; origin: { x: number; z: number }; xDirection: 1 | -1; zDirection: 1 | -1 };
+  grid?: { enabled: boolean; spacing: number };
+  supportedSides?: BoardSide[];
+  stackup?: BoardLayer[];
   length: number;
   width: number;
   thickness: number;
@@ -174,7 +183,7 @@ export function validBoardConfiguration(value: unknown): value is BoardConfigura
         r.width > 0 &&
         Math.abs(r.x) + r.length / 2 <= c.length / 2 &&
         Math.abs(r.z) + r.width / 2 <= c.width / 2,
-    )
+    ) && validBoardExtensions(c)
   );
 }
 function emptyRecord(id: string, kind: BoardSpecification['kind']): BoardSpecification {
@@ -398,7 +407,7 @@ export function boardSpecification(
   if (component.id === 'pcb')
     return templateSpecification(
       project.boardTemplateId ?? 'cooling-demo',
-      project.boardTemplateId !== 'cooling-demo' ? project.boardConfiguration : undefined,
+      project.boardConfiguration,
     );
   return developmentBoardSpecifications.find((s) => s.id === component.catalogId);
 }

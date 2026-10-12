@@ -144,7 +144,7 @@ export function reviewDesign(project: Project): DesignFinding[] {
     if (spacing > 0)
       for (let i = 0; i < parts.length; i++)
         for (let j = i + 1; j < parts.length; j++) {
-          if (footprintGap(parts[i], parts[i].position, parts[j], board) * 10 < spacing)
+          if ((parts[i].side ?? 'top') === (parts[j].side ?? 'top') && footprintGap(parts[i], parts[i].position, parts[j], board) * 10 < spacing)
             findings.push({
               id: `spacing:${parts[i].id}:${parts[j].id}`,
               status: 'fail',

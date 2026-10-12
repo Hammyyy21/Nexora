@@ -1,3 +1,4 @@
+import { workspaceNets } from '../ai/snapshot';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspaceStore } from '../store/useWorkspaceStore';
 import { reviewElectrical } from '../engineering/electrical';
@@ -14,6 +15,7 @@ const BOX_HEIGHT = 440;
 const offset = { x: 65, y: 60 };
 export function SchematicWorkspace() {
   const project = useWorkspaceStore((s) => s.currentProject);
+  const selectedEntity=useWorkspaceStore(s=>s.selectedEntity);
   const selectedId = useWorkspaceStore((s) => s.selectedComponentId);
   const select = useWorkspaceStore((s) => s.selectComponent);
   const connect = useWorkspaceStore((s) => s.connectPorts);
@@ -154,7 +156,7 @@ export function SchematicWorkspace() {
                     key={wire.id}
                     d={`M ${a.x} ${a.y} H ${midX} V ${b.y} H ${b.x}`}
                     fill="none"
-                    stroke="#6fd6a4"
+                    stroke={selectedEntity?.kind==='net' && workspaceNets(project).find(n=>n.id===selectedEntity.id)?.terminals.includes(`${wire.from.componentId}:${wire.from.portId}`) ? '#ffd075' : '#6fd6a4'}
                     strokeWidth="2.5"
                     strokeLinejoin="round"
                     pointerEvents="none"

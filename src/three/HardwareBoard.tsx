@@ -1,3 +1,4 @@
+import { outlinePoints } from '../workspace/boardGeometry';
 import { defaultBoardConfiguration } from '../workspace/boardSpecifications';
 import { useEffect, useMemo } from 'react';
 import { Shape, Path, ExtrudeGeometry, CanvasTexture, SRGBColorSpace } from 'three';
@@ -15,18 +16,10 @@ export function HardwareBoard() {
   const board = useMemo(() => configuration ?? defaultBoardConfiguration(), [configuration]);
   const geometry = useMemo(() => {
     const s = new Shape();
-    const x = board.length / 20,
-      z = board.width / 20,
-      r = 0.18;
-    s.moveTo(-x + r, -z);
-    s.lineTo(x - r, -z);
-    s.quadraticCurveTo(x, -z, x, -z + r);
-    s.lineTo(x, z - r);
-    s.quadraticCurveTo(x, z, x - r, z);
-    s.lineTo(-x + r, z);
-    s.quadraticCurveTo(-x, z, -x, z - r);
-    s.lineTo(-x, -z + r);
-    s.quadraticCurveTo(-x, -z, -x + r, -z);
+    const points=outlinePoints(board);
+    s.moveTo(points[0].x / 10, -points[0].z / 10);
+    points.slice(1).forEach(p=>s.lineTo(p.x / 10, -p.z / 10));
+    s.closePath();
     for (const h of board.mountingHoles) {
       const hole = new Path();
       hole.absarc(h.x / 10, -h.z / 10, h.diameter / 20, 0, Math.PI * 2, true);
@@ -198,6 +191,12 @@ export function HardwareBoard() {
           />
         </mesh>
       )}
+      {board.restrictedRegions.map((region,i) => (
+        <mesh key={region.id ?? i} rotation={[-Math.PI/2,0,0]} position={[region.x/10, (region.side==='bottom'?-1:1)*(board.thickness/20+0.008),region.z/10]}>
+          <planeGeometry args={[region.length/10,region.width/10]} />
+          <meshBasicMaterial color="#ff9466" transparent opacity={0.35} side={2} depthWrite={false} />
+        </mesh>
+      ))}
       {board.mountingHoles.map((hole, i) => (
         <group key={i} position={[hole.x / 10, board.thickness / 20 + 0.006, hole.z / 10]}>
           {!blank && (

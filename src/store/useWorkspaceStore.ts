@@ -1,3 +1,5 @@
+import { applyPCBOperation, type PCBOperation } from '../workspace/pcbOperations';
+import { snapPosition } from '../workspace/boardGeometry';
 import { assessPosition, movable, validPosition } from '../lib/transforms';
 import { getPart } from '../catalog/catalog';
 import { logicalPorts, validateConnection } from '../schematic/model';
@@ -5,7 +7,6 @@ import { canReplace } from '../catalog/compatibility';
 import { createInstance, placementOrigin } from '../catalog/instances';
 import { create } from 'zustand';
 import {
-  validBoardConfiguration,
   presetBoardConfiguration,
   type BoardConfiguration,
 } from '../workspace/boardSpecifications';
@@ -24,6 +25,10 @@ import type {
   Vec3,
 } from '../types/workspace';
 interface WorkspaceState {
+  projectRevision: number;
+  selectedEntity: { kind: "component" | "net" | "region" | "firmware"; id: string } | null;
+  applyPCBEdit: (operation: PCBOperation) => boolean;
+  removeComponent: (id: string) => void;
   dragMode: boolean;
   transformPointerActive: boolean;
   transformError: string | null;
@@ -100,6 +105,29 @@ interface WorkspaceState {
   addMessage: (role: AssistantMessage['role'], text: string) => void;
 }
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
+  projectRevision: 0,
+  selectedEntity: null,
+  applyPCBEdit: (operation) => {
+    try {
+      const s=get();
+      if(s.componentDrag || s.placement) throw new Error('Finish or cancel the current placement first.');
+      const currentProject=applyPCBOperation(s.currentProject,operation);
+      set({currentProject, selectedComponentId:currentProject.selectedComponentId ?? s.selectedComponentId,
+        undoHistory:[...s.undoHistory.slice(-49),cloneProject(s.currentProject)],redoHistory:[],
+        notice:'PCB edit applied. Review engineering findings for geometric and electrical constraints.'});
+      return true;
+    } catch(e) { set({notice:(e as Error).message}); return false; }
+  },
+  removeComponent: (id) => {
+    const s=get(), p=cloneProject(s.currentProject), c=p.components.find(c=>c.id===id);
+    if(!c||!movable(c)) return;
+    p.components=p.components.filter(c=>c.id!==id);
+    p.connections=p.connections?.filter(w=>w.from.componentId!==id&&w.to.componentId!==id);
+    if(p.engineeringInputs) delete p.engineeringInputs[id];
+    if(p.firmwareTargetId===id) delete p.firmwareTargetId;
+    p.selectedComponentId=null;
+    set({currentProject:p,selectedComponentId:null,selectedEntity:null,undoHistory:[...s.undoHistory.slice(-49),cloneProject(s.currentProject)],redoHistory:[]});
+  },
   dragMode: false,
   transformPointerActive: false,
   transformError: null,
@@ -129,6 +157,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       set({ transformError: 'Finish or cancel the current placement first.' });
       return false;
     }
+    position = snapPosition(s.currentProject, position);
     const result = assessPosition(s.currentProject, c, position);
     if (!result.valid) {
       set({ transformError: result.error });
@@ -180,6 +209,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       drag = s.componentDrag;
     if (!drag || drag.project !== s.currentProject || drag.mode !== s.activeViewMode) return false;
     const c = s.currentProject.components.find((item) => item.id === drag.id)!;
+    position = snapPosition(s.currentProject, position);
     const result = assessPosition(s.currentProject, c, position);
     if (!result.valid) {
       set({ transformError: result.error });
@@ -207,7 +237,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (error) return error;
     const next = {
       ...project,
-      schemaVersion: 2 as const,
+      schemaVersion: 3 as const,
       connections: [
         ...(project.connections ?? []),
         { id: `wire-${crypto.randomUUID()}`, from, to },
@@ -255,39 +285,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   savedSnapshot: null,
   notice: null,
   placement: null,
-  configureBoard: (configuration) => {
-    if (
-      !validBoardConfiguration(configuration) ||
-      (get().currentProject.boardTemplateId ?? 'cooling-demo') === 'cooling-demo'
-    )
-      return;
-    get().cancelComponentDrag();
-    set((s) => ({
-      currentProject: {
-        ...s.currentProject,
-        schemaVersion: 2,
-        boardConfiguration: structuredClone(configuration),
-        components: s.currentProject.components.map((c) =>
-          c.id === 'pcb'
-            ? {
-                ...c,
-                dimensions: [
-                  configuration.length / 10,
-                  configuration.thickness / 10,
-                  configuration.width / 10,
-                ] as Vec3,
-              }
-            : c,
-        ),
-      },
-      undoHistory: [...s.undoHistory.slice(-49), cloneProject(s.currentProject)],
-      redoHistory: [],
-      cameraView: 'fit',
-      cameraRequest: s.cameraRequest + 1,
-      notice:
-        'Board configuration applied. Review updated placement warnings; fabrication remains unverified.',
-    }));
-  },
+  configureBoard: (configuration) => { get().applyPCBEdit({type:'configure_board',configuration}); },
   setBoardTemplate: (id) => {
     if (!isBoardTemplate(id)) return;
     get().cancelComponentDrag();
@@ -305,7 +303,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         : {
             currentProject: {
               ...s.currentProject,
-              schemaVersion: 2,
+              schemaVersion: 3,
               boardTemplateId: id,
               boardConfiguration: cfg,
               boardConfigurations: saved,
@@ -359,6 +357,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     return true;
   },
   movePlacement: (position, rotation) => {
+    position = snapPosition(get().currentProject, position);
     if (!validPosition(position) || rotation?.some((n) => !Number.isFinite(n) || Math.abs(n) > 360))
       return;
     set((s) =>
@@ -389,7 +388,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       return {
         currentProject: {
           ...s.currentProject,
-          schemaVersion: 2,
+          schemaVersion: 3,
           components: [...s.currentProject.components, part],
         },
         placement: null,
@@ -423,7 +422,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     set({
       currentProject: {
         ...s.currentProject,
-        schemaVersion: 2,
+        schemaVersion: 3,
         components: s.currentProject.components.map((c) => (c.id === id ? replacement : c)),
         connections: (s.currentProject.connections ?? []).filter((wire) =>
           [wire.from, wire.to].every(
@@ -434,6 +433,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         ),
       },
       selectedComponentId: id,
+      selectedEntity: id ? { kind: "component", id } : null,
       componentDrag: null,
       transformError: null,
       placement: null,
@@ -449,7 +449,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       const c = s.currentProject.components.find((c) => c.id === id);
       if (!c || (c.id !== 'mcu' && !getPart(c.catalogId)?.architecture)) return {};
       return {
-        currentProject: { ...s.currentProject, schemaVersion: 2, firmwareTargetId: id },
+        currentProject: { ...s.currentProject, schemaVersion: 3, firmwareTargetId: id },
         undoHistory: [...s.undoHistory.slice(-49), cloneProject(s.currentProject)],
         redoHistory: [],
         notice:
@@ -459,6 +459,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   selectComponent: (id) =>
     set((s) => ({
       selectedComponentId: id,
+      selectedEntity: id ? { kind: "component", id } : null,
       componentDrag: null,
       transformError: null,
       inspectorOpen: id ? true : s.inspectorOpen,
@@ -475,6 +476,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       set({ notice: 'Enter finite rotations between −360 and 360 degrees.' });
       return;
     }
+    if (patch.position) patch = { ...patch, position: snapPosition(s.currentProject, patch.position) };
     if (patch.position || patch.rotation) {
       if (!movable(c)) {
         set({ notice: 'This component is fixed.' });
@@ -621,7 +623,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
           ? cloneProject(demoProject)
           : {
               ...cloneProject(demoProject),
-              schemaVersion: 2 as const,
+              schemaVersion: 3 as const,
               id: s.currentProject.id,
               name: s.currentProject.name,
               boardTemplateId: 'blank-92' as const,
@@ -660,3 +662,11 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       ],
     })),
 }));
+
+// Monotonic session revision also invalidates proposals after edit → undo.
+useWorkspaceStore.subscribe((state, previous) => {
+  if (state.currentProject !== previous.currentProject) {
+    useWorkspaceStore.setState({ projectRevision: previous.projectRevision + 1,
+      selectedEntity: state.selectedEntity?.kind === 'component' && !state.currentProject.components.some(c=>c.id===state.selectedEntity?.id) ? null : state.selectedEntity });
+  }
+});

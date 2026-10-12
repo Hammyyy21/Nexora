@@ -1,3 +1,4 @@
+import { buildWorkspaceSnapshot, inspectProject, type InspectionFinding } from './snapshot';
 import { demoActions } from './demoActions';
 import { logicalPorts } from '../schematic/model';
 import { boardSpecification } from '../workspace/boardSpecifications';
@@ -37,6 +38,7 @@ export function guideContext(catalogId?: string, question = ''): ChatContext {
       : s.currentProject.components.find((c) => c.id === 'pcb');
   const spec = board && boardSpecification(s.currentProject, board);
   return {
+    workspace_snapshot: buildWorkspaceSnapshot(s.currentProject,s.projectRevision,s.selectedComponentId,s.currentProject.firmwareSource ?? draftFor(useFirmwareStore.getState(),s.currentProject.id).source),
     board_summary:
       /board|specification/i.test(question) && spec
         ? JSON.stringify(spec).slice(0, 6000)
@@ -84,12 +86,14 @@ function initialLength(): ResponseLength {
 }
 interface PendingProposal {
   projectId: string;
+  revision: number;
   snapshot: string;
   firmwareBefore: string;
   actions: AIAction[];
   summary: string[];
 }
 interface GuideState {
+  inspection: { projectId: string; revision: number; findings: InspectionFinding[] } | null;
   pending: PendingProposal | null;
   responseLength: ResponseLength;
   editPendingSource: (source: string) => void;
@@ -107,6 +111,7 @@ interface GuideState {
   ask: (text: string, options?: { local?: boolean; catalogId?: string }) => Promise<string>;
 }
 export const useGuideStore = create<GuideState>((set, get) => ({
+  inspection: null,
   pending: null,
   editPendingSource: (source) => {
     const pending = get().pending;
@@ -136,6 +141,7 @@ export const useGuideStore = create<GuideState>((set, get) => ({
     const workspace = useWorkspaceStore.getState();
     if (
       workspace.currentProject.id !== pending.projectId ||
+      workspace.projectRevision !== pending.revision ||
       JSON.stringify(workspace.currentProject) !== pending.snapshot ||
       (pending.actions.some((a) => a.type === 'generate_firmware') &&
         draftFor(useFirmwareStore.getState(), workspace.currentProject.id).source !==
@@ -224,21 +230,32 @@ export const useGuideStore = create<GuideState>((set, get) => ({
     const context = guideContext(options?.catalogId, text);
     const snapshot = JSON.stringify(useWorkspaceStore.getState().currentProject);
     const projectId = useWorkspaceStore.getState().currentProject.id;
+    const revision = useWorkspaceStore.getState().projectRevision;
+    const inspectionQuestion = /inspect|review|check|warning|problem|inconsisten|firmware.*match/i.test(text);
+    if(inspectionQuestion) set({inspection:{projectId,revision,findings:inspectProject(useWorkspaceStore.getState().currentProject,firmwareBefore)}});
     set({ busy: true, pending: null });
     try {
       if (local) {
+        if(inspectionQuestion && !/suggest|move|add|remove|generate|create/i.test(text)) return 'Project inspection completed using deterministic engineering checks. Select a finding to inspect its entities. No complete electrical safety or firmware validation is established.';
         const actions = demoActions(text, useWorkspaceStore.getState().currentProject);
         if (!actions) return 'Demo Assistant · ' + runDemoCommand(text);
         const proposed = previewAIChanges(useWorkspaceStore.getState().currentProject, actions);
         if (actions.every((a) => a.type === 'review_project' || a.type === 'show_specifications'))
           return 'Demo Assistant · ' + proposed.summary.join('\n\n');
         set({
-          pending: { projectId, snapshot, firmwareBefore, actions, summary: proposed.summary },
+          pending: { projectId, revision, snapshot, firmwareBefore, actions, summary: proposed.summary },
         });
         return 'Demo Assistant · Ready for review. Apply or cancel the proposal.';
       }
       const result = await askGuide(text.trim(), context, get().responseLength);
+      if (useWorkspaceStore.getState().projectRevision === revision && useWorkspaceStore.getState().currentProject.id === projectId && result.findings?.length) {
+        const evidence=inspectProject(useWorkspaceStore.getState().currentProject,firmwareBefore);
+        const explanations=new Map(result.findings.map(f=>[f.evidence_id,f]));
+        if(result.findings.some(f=>!evidence.some(e=>e.id===f.evidence_id))) throw new Error('AI finding refers to missing evidence.');
+        set({inspection:{projectId,revision,findings:evidence.map(f=>{const note=explanations.get(f.id);return note?{...f,details:`${f.details} AI interpretation: ${note.explanation}`,remedy:note.next_step}:f;})}});
+      }
       if (
+        useWorkspaceStore.getState().projectRevision === revision &&
         result.actions?.length &&
         useWorkspaceStore.getState().currentProject.id === projectId &&
         JSON.stringify(useWorkspaceStore.getState().currentProject) === snapshot
@@ -247,15 +264,12 @@ export const useGuideStore = create<GuideState>((set, get) => ({
           useWorkspaceStore.getState().currentProject,
           result.actions,
         );
-        if (
-          result.actions.every(
-            (a) => a.type === 'review_project' || a.type === 'show_specifications',
-          )
-        )
-          return proposed.summary.join('\n\n');
+        if (result.actions.every(a => a.type === 'review_project')) return formatGuideResponse(result,get().responseLength);
+        if (result.actions.every(a => a.type === 'show_specifications')) return proposed.summary.join('\n\n');
         set({
           pending: {
             projectId,
+            revision,
             snapshot,
             firmwareBefore,
             actions: result.actions,

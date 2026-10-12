@@ -93,6 +93,12 @@ export function ComponentMesh({ component: c }: { component: HardwareComponent }
           <ComponentPackage component={c} />
         </group>
       </Appearance.Provider>
+      {selected && c.footprint && c.id !== 'pcb' && (
+        <mesh position={[0,-c.dimensions[1]/2-0.003,0]} rotation={[-Math.PI/2,0,0]}>
+          <planeGeometry args={[c.footprint.length/10,c.footprint.width/10]} />
+          <meshBasicMaterial color="#65a2ff" transparent opacity={0.25} side={2} depthWrite={false} />
+        </mesh>
+      )}
       {(selected || hovered) && (
         <mesh
           position={[0, c.type === 'board' ? 0.13 : c.dimensions[1] / 2 + 0.06, 0]}

@@ -17,6 +17,9 @@ export type ComponentType =
   | 'capacitor'
   | 'housing';
 export interface HardwareComponent {
+  side?: import("../workspace/boardGeometry").BoardSide;
+  footprint?: import("../workspace/boardGeometry").Footprint;
+  conceptSourceId?: string;
   id: string;
   catalogId?: string;
   fixed?: boolean;
@@ -67,7 +70,7 @@ export interface Project {
     Record<import('../workspace/boardTemplates').BoardTemplateId, BoardConfiguration>
   >;
   boardTemplateId?: import('../workspace/boardTemplates').BoardTemplateId;
-  schemaVersion: 1 | 2;
+  schemaVersion: 1 | 2 | 3;
   selectedComponentId?: string | null;
   firmwareTargetId?: string;
   id: string;

@@ -1,3 +1,4 @@
+import { InspectionFindings } from '../../ai/InspectionFindings';
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowUp, ChevronDown, LoaderCircle, Sparkles, X } from 'lucide-react';
@@ -73,6 +74,7 @@ export function CommandBar({
               )}
             </div>
             <div className="response-messages" aria-live="polite">
+              <button className="button" disabled={busy} onClick={()=>void submit("Inspect my entire project.")}>Inspect entire project</button>
               {!s.demoAssistantMessages.length && (
                 <p className="assistant">
                   Ask about the selected component or your project. Choose a local shortcut to
@@ -91,6 +93,7 @@ export function CommandBar({
                   {guide.mode === 'ai' ? 'Asking AI Guide…' : 'Applying local command…'}
                 </p>
               )}
+              <InspectionFindings />
               {guide.pending && guide.pending.projectId === s.currentProject.id && (
                 <section className="ai-proposal" aria-label="AI design proposal">
                   <strong>Proposed design changes · Review before applying</strong>
@@ -99,6 +102,7 @@ export function CommandBar({
                       <li key={i}>{line}</li>
                     ))}
                   </ul>
+                  {guide.pending.actions.some(a=>['configure_board','update_component','duplicate_component'].includes(a.type)) && <details><summary>Review PCB operation data</summary><pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{JSON.stringify(guide.pending.actions,null,2)}</pre></details>}
                   {guide.pending.actions
                     .filter((a) => a.type === 'generate_firmware')
                     .map(

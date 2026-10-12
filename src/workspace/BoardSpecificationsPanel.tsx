@@ -1,3 +1,5 @@
+import { PCBSettings } from './PCBSettings';
+import { normalizeBoard } from './boardGeometry';
 import { useState } from 'react';
 import type { HardwareComponent, Project } from '../types/workspace';
 import { useWorkspaceStore } from '../store/useWorkspaceStore';
@@ -202,7 +204,7 @@ export function SelectedBoardSpecifications({
   return (
     <>
       <BoardSpecifications spec={spec} component={component} />
-      {component.id === 'pcb' && (project.boardTemplateId ?? 'cooling-demo') !== 'cooling-demo' && (
+      {component.id === 'pcb' && (
         <BoardConfigurationEditor
           key={JSON.stringify(project.boardConfiguration)}
           configuration={project.boardConfiguration}
@@ -216,10 +218,11 @@ export function BoardConfigurationEditor({
 }: {
   configuration?: BoardConfiguration;
 }) {
-  const [draft, setDraft] = useState(configuration ?? defaultBoardConfiguration());
+  const [draft, setDraft] = useState(normalizeBoard(configuration ?? defaultBoardConfiguration()));
   const [error, setError] = useState('');
+  const entity=useWorkspaceStore(s=>s.selectedEntity);
   return (
-    <details className="board-configuration">
+    <details className="board-configuration" open={entity?.kind === "region" ? true : undefined}>
       <summary>Configure blank PCB</summary>
       <form
         onSubmit={(e) => {
@@ -279,22 +282,7 @@ export function BoardConfigurationEditor({
             onChange={(e) => setDraft({ ...draft, material: e.target.value || undefined })}
           />
         </label>
-        <label>
-          Layer count
-          <input
-            type="number"
-            min="1"
-            max="64"
-            placeholder="Not specified"
-            value={draft.layers ?? ''}
-            onChange={(e) =>
-              setDraft({
-                ...draft,
-                layers: e.target.value === '' ? undefined : e.target.valueAsNumber,
-              })
-            }
-          />
-        </label>
+        <PCBSettings draft={draft} onChange={setDraft} />
         <fieldset>
           <legend>Mounting holes · mm from board center</legend>
           {draft.mountingHoles.map((h, i) => (
@@ -340,7 +328,7 @@ export function BoardConfigurationEditor({
             onClick={() =>
               setDraft({
                 ...draft,
-                mountingHoles: [...draft.mountingHoles, { x: 0, z: 0, diameter: 2.6 }],
+                mountingHoles: [...draft.mountingHoles, { id: `hole-${crypto.randomUUID()}`, x: 0, z: 0, diameter: 2.6 }],
               })
             }
           >
@@ -350,7 +338,7 @@ export function BoardConfigurationEditor({
         <fieldset>
           <legend>Restricted regions · mm</legend>
           {draft.restrictedRegions.map((r, i) => (
-            <div key={i}>
+            <div key={i} style={entity?.id===r.id?{outline:"1px solid #ffd075"}:undefined}>
               <label>
                 Region name
                 <input
@@ -367,6 +355,7 @@ export function BoardConfigurationEditor({
                   }
                 />
               </label>
+              <label>Region side<select aria-label={`Region ${i+1} side`} value={r.side ?? 'all'} onChange={e=>setDraft({...draft, restrictedRegions:draft.restrictedRegions.map((v,n)=>n===i?{...v,side:e.target.value as 'top'|'bottom'|'all'}:v)})}><option value="all">Both sides</option><option value="top">Top</option><option value="bottom">Bottom</option></select></label>
               <div className="board-hole-editor">
                 {(['x', 'z', 'length', 'width'] as const).map((key) => (
                   <label key={key}>
@@ -411,7 +400,7 @@ export function BoardConfigurationEditor({
                 ...draft,
                 restrictedRegions: [
                   ...draft.restrictedRegions,
-                  { name: 'Keepout', x: 0, z: 0, length: 5, width: 5 },
+                  { id: `region-${crypto.randomUUID()}`, side: 'all', name: 'Keepout', x: 0, z: 0, length: 5, width: 5 },
                 ],
               })
             }

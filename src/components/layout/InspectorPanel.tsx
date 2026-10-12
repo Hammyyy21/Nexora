@@ -1,3 +1,4 @@
+import { PCBComponentEditor } from '../../workspace/PCBComponentEditor';
 import { SelectedBoardSpecifications } from '../../workspace/BoardSpecificationsPanel';
 import { useState } from 'react';
 import { demoConnections } from '../../data/demoProject';
@@ -73,6 +74,7 @@ export function InspectorPanel() {
                 <span className="blue-tag">Selected</span>
               </div>
               <SelectedBoardSpecifications project={s.currentProject} component={c} />
+              <PCBComponentEditor key={`${c.id}:${JSON.stringify(c.footprint)}`} component={c} />
               <div
                 className="inspector-tabs"
                 role="tablist"
@@ -241,7 +243,7 @@ export function InspectorPanel() {
                               position: c.initialPosition ?? ([6, 1, 0] as Vec3),
                               rotation: [0, 0, 0] as Vec3,
                             }
-                          : demoProject.components.find((b) => b.id === c.id)!;
+                          : demoProject.components.find((b) => b.id === (c.conceptSourceId ?? c.id))!;
                         s.editComponent(c.id, {
                           position: [...base.position],
                           rotation: [...base.rotation],

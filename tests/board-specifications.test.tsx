@@ -1,3 +1,4 @@
+import { migrateProject } from '../src/workspace/migrations';
 import { InspectorPanel } from '../src/components/layout/InspectorPanel';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
@@ -119,12 +120,12 @@ describe('configured board geometry and persistence', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Apply board configuration' }));
     const p = store.getState().currentProject;
     expect(p.components[0].dimensions).toEqual([12, 0.16, 6.4]);
-    expect(p.components.slice(1)).toEqual(originalParts);
+    expect(p.components.slice(1)).toEqual(migrateProject({ ...p, components: originalParts }).components);
     expect(boardSpecification(p, p.components[0])?.material).toMatchObject({
       value: 'FR-4',
       status: 'configured',
     });
-    expect(parseProject(serializeProject(p))).toEqual(p);
+    expect(parseProject(serializeProject(p))).toEqual(migrateProject(p));
     store.getState().undo();
     expect(store.getState().currentProject.components[0].dimensions[0]).toBe(9.2);
     store.getState().redo();
@@ -135,10 +136,10 @@ describe('configured board geometry and persistence', () => {
     expect(store.getState().currentProject.components[0].dimensions[0]).toBe(12);
   });
   it('uses safe defaults for legacy v1/v2 and rejects malformed configuration', () => {
-    expect(parseProject(serializeProject(demoProject))).toEqual(demoProject);
+    expect(parseProject(serializeProject(demoProject))).toEqual(migrateProject(demoProject));
     expect(
       parseProject(serializeProject(createProject('Legacy'))).boardConfiguration,
-    ).toBeUndefined();
+    ).toMatchObject({ outline: { kind: 'rounded-rectangle', radius: 1.8 } });
     for (const patch of [
       { length: NaN },
       { thickness: 0 },

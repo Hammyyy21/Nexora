@@ -1,3 +1,4 @@
+import { componentFootprint, rectangleInside } from '../workspace/boardGeometry';
 import { Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { boardSpecification } from '../workspace/boardSpecifications';
 import type { HardwareComponent, Project, Vec3, ViewMode } from '../types/workspace';
@@ -26,6 +27,7 @@ function matrix(c: HardwareComponent, position = c.position) {
   );
 }
 function bounds(c: HardwareComponent, position: Vec3, relativeTo?: Matrix4) {
+  const footprint = componentFootprint(c);
   const transform = matrix(c, position);
   if (relativeTo) transform.premultiply(relativeTo);
   const box = new Box3();
@@ -34,9 +36,9 @@ function bounds(c: HardwareComponent, position: Vec3, relativeTo?: Matrix4) {
       for (const z of [-1, 1]) {
         box.expandByPoint(
           new Vector3(
-            (x * c.dimensions[0]) / 2,
+            (x * footprint.length) / 20,
             (y * c.dimensions[1]) / 2,
-            (z * c.dimensions[2]) / 2,
+            (z * footprint.width) / 20,
           ).applyMatrix4(transform),
         );
       }
@@ -66,18 +68,24 @@ export function assessPosition(
     const edge = (spec?.edgeClearance.value ?? 0) / MM_PER_UNIT;
     const halfX = board.dimensions[0] / 2 - edge;
     const halfZ = board.dimensions[2] / 2 - edge;
-    const outside =
+    const outsideRectangle =
       box.min.x < -halfX - 1e-6 || box.max.x > halfX + 1e-6 ||
       box.min.z < -halfZ - 1e-6 || box.max.z > halfZ + 1e-6;
-    // Rounded concept outline: reject AABB corners outside its 1.8 mm corner radius.
+    const configuration = project.boardConfiguration;
+    const outside = configuration ? !rectangleInside(
+      { x: box.min.x * 10, z: box.min.z * 10 },
+      { x: box.max.x * 10, z: box.max.z * 10 }, configuration, edge * 10) : outsideRectangle;
     const radius = Math.max(0, 0.18 - edge);
-    const roundedCorner = [box.min.x, box.max.x].some((x) => [box.min.z, box.max.z].some((z) =>
+    const roundedCorner = !configuration && [box.min.x, box.max.x].some((x) => [box.min.z, box.max.z].some((z) =>
       Math.hypot(Math.max(0, Math.abs(x) - (halfX - radius)), Math.max(0, Math.abs(z) - (halfZ - radius))) > radius + 1e-6));
+    if(configuration?.supportedSides && !configuration.supportedSides.includes(c.side ?? 'top'))
+      return { valid: false, error: 'The selected board side is not supported.', warnings };
     const hole = spec?.mountingHoles.value?.some((h) => {
       const x = h.x / MM_PER_UNIT, z = h.z / MM_PER_UNIT;
       return Math.hypot(x - Math.max(box.min.x, Math.min(x, box.max.x)), z - Math.max(box.min.z, Math.min(z, box.max.z))) < h.diameter / (2 * MM_PER_UNIT) - 1e-6;
     });
     const restricted = spec?.restrictedRegions.value?.some((r) =>
+      (!r.side || r.side === 'all' || r.side === (c.side ?? 'top')) &&
       box.max.x > (r.x - r.length / 2) / MM_PER_UNIT && box.min.x < (r.x + r.length / 2) / MM_PER_UNIT &&
       box.max.z > (r.z - r.width / 2) / MM_PER_UNIT && box.min.z < (r.z + r.width / 2) / MM_PER_UNIT);
     if (hole || restricted || (!outside && roundedCorner)) {
@@ -86,18 +94,18 @@ export function assessPosition(
       if (project.placementMode === 'board') return { valid: false, error: message, warnings };
       warnings.push(message);
     }
-    const below = box.min.y < board.dimensions[1] / 2 - 1e-6;
+    const below = c.side === 'bottom' ? box.max.y > -board.dimensions[1] / 2 + 1e-6 : box.min.y < board.dimensions[1] / 2 - 1e-6;
     if (project.placementMode === 'board' && (outside || below))
       return {
         valid: false,
         warnings,
         error: outside
           ? 'Keep the whole component inside the PCB outline, or choose Free workspace.'
-          : 'Keep the component above the PCB surface, or choose Free workspace.',
+          : 'Keep the component outside its selected PCB surface, or choose Free workspace.',
       };
     if (outside)
       warnings.push('Outside the PCB outline; Free workspace allows off-board visual placement.');
-    if (below && !outside) warnings.push('Component overlaps or sits below the PCB surface.');
+    if (below && !outside) warnings.push('Component overlaps or sits on the wrong side of the PCB surface.');
   } else if (project.placementMode === 'board')
     return { valid: false, error: 'No PCB bounds are available for board placement.', warnings };
   const box = bounds(c, position);

@@ -1,3 +1,4 @@
+import { migrateProject } from '../src/workspace/migrations';
 import { beforeEach, expect, it } from 'vitest';
 import { useWorkspaceStore as store } from '../src/store/useWorkspaceStore';
 import { assessPosition, canonicalPosition, MM_PER_UNIT } from '../src/lib/transforms';
@@ -23,7 +24,7 @@ it('keeps previews out of project saves and commits a continuous drag as one und
   expect(store.getState().currentProject).toBe(project);
   expect(store.getState().undoHistory).toHaveLength(0);
   store.getState().save();
-  expect(loadProject().components.find((c) => c.id === 'mcu')).toEqual(original);
+  expect(loadProject().components.find((c) => c.id === 'mcu')).toEqual(migrateProject(project).components.find(c=>c.id==='mcu'));
   store.getState().finishComponentDrag();
   expect(component().position).toEqual([0.99, 0.5, -1]);
   expect(component().rotation).toEqual(original.rotation);

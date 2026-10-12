@@ -92,6 +92,7 @@ function conceptPorts(component: HardwareComponent): LogicalPort[] {
 /** Manufacturer pins and legacy symbolic terminals are separate namespaces.
  * No implicit physical-to-symbolic migration is ever performed. */
 export function logicalPorts(component: HardwareComponent): LogicalPort[] {
+  if(component.conceptSourceId) component={...component,id:component.conceptSourceId};
   const legacy = [
     ...conceptPorts(component),
     ...demoPins(component).map((p) => ({

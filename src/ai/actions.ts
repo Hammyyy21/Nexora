@@ -1,3 +1,7 @@
+import { applyPCBOperation, type PCBOperation } from '../workspace/pcbOperations';
+import { validBoardConfiguration } from '../workspace/boardSpecifications';
+import { validFootprint, snapPosition } from '../workspace/boardGeometry';
+import { migrateProject } from '../workspace/migrations';
 import { validateConnection, connectionLabel } from '../schematic/model';
 import { suggestPlacements } from '../engineering/placement';
 import { reviewDesign } from '../engineering/insights';
@@ -10,6 +14,7 @@ import { cloneProject } from '../lib/project';
 import { createProject, projectTemplates } from '../projects/templates';
 
 export type AIAction =
+  | PCBOperation
   | { type: 'add_component'; catalog_id: string; position?: Vec3 | null }
   | { type: 'move_component'; component_id: string; position: Vec3 }
   | { type: 'remove_component'; component_id: string }
@@ -34,6 +39,7 @@ export function parseAIAction(value: unknown): AIAction {
   const validId = (id: unknown): id is string =>
     typeof id === 'string' && /^[a-zA-Z0-9-]{1,100}$/.test(id);
   const allowed = [
+    'configuration', 'rotation', 'side', 'footprint',
     'type',
     'component_id',
     'catalog_id',
@@ -48,6 +54,9 @@ export function parseAIAction(value: unknown): AIAction {
   if (Object.keys(v).some((key) => !allowed.includes(key)))
     throw new Error('Unknown action fields.');
   const fields: Record<string, string[]> = {
+    configure_board: ['configuration'],
+    update_component: ['component_id','rotation','side','footprint'],
+    duplicate_component: ['component_id'],
     add_component: ['catalog_id', 'position'],
     move_component: ['component_id', 'position'],
     remove_component: ['component_id'],
@@ -66,6 +75,20 @@ export function parseAIAction(value: unknown): AIAction {
   )
     throw new Error('Unexpected arguments for this action.');
   switch (v.type) {
+    case 'configure_board':
+      if(!validBoardConfiguration(v.configuration)) break;
+      return {type:v.type,configuration:structuredClone(v.configuration)};
+    case 'duplicate_component':
+      if(!validId(v.component_id)) break;
+      return {type:v.type,component_id:v.component_id};
+    case 'update_component': {
+      if(!validId(v.component_id) || (v.side != null && !['top','bottom'].includes(String(v.side))) ||
+        (v.footprint != null && !validFootprint(v.footprint)) ||
+        (v.rotation != null && (!Array.isArray(v.rotation)||v.rotation.length!==3||v.rotation.some(n=>typeof n!=='number'||!Number.isFinite(n)||Math.abs(n)>360))) ||
+        (v.side == null && v.footprint == null && v.rotation == null)) break;
+      return {type:v.type,component_id:v.component_id,...(v.side?{side:v.side as 'top'|'bottom'}:{}),...(v.footprint?{footprint:v.footprint as import('../workspace/boardGeometry').Footprint}:{}),...(v.rotation?{rotation:v.rotation as Vec3}:{})};
+    }
+
     case 'review_project':
     case 'show_specifications':
     case 'suggest_placements':
@@ -135,7 +158,7 @@ export interface ProposedRevision {
 export function previewAIChanges(current: Project, actions: readonly AIAction[]): ProposedRevision {
   if (!actions.length || actions.length > 5)
     throw new Error('AI must propose between 1 and 5 operations.');
-  const project = cloneProject(current);
+  let project = cloneProject(current);
   const summary: string[] = [];
   actions = actions.map(parseAIAction);
   const createAction = actions.find((a) => a.type === 'create_project');
@@ -154,6 +177,13 @@ export function previewAIChanges(current: Project, actions: readonly AIAction[])
   for (const raw of actions) {
     const action = parseAIAction(raw);
     switch (action.type) {
+      case 'configure_board':
+      case 'update_component':
+      case 'duplicate_component':
+        project=applyPCBOperation(project,action);
+        summary.push(action.type==='configure_board'?`Configure PCB: ${action.configuration.length} × ${action.configuration.width} × ${action.configuration.thickness} mm, ${action.configuration.outline?.kind??'rounded-rectangle'}; ${action.configuration.mountingHoles.length} holes, ${action.configuration.restrictedRegions.length} keep-outs. Review layer settings and geometry.`:`${action.type==='duplicate_component'?'Duplicate':'Update placement / footprint of'} ${action.component_id}.`);
+        break;
+
       case 'connect_components': {
         const from = { componentId: action.component_id, portId: action.port_id };
         const to = { componentId: action.target_component_id, portId: action.target_port_id };
@@ -231,10 +261,10 @@ export function previewAIChanges(current: Project, actions: readonly AIAction[])
         const id = `part-${crypto.randomUUID()}`;
         const component = createInstance(catalogPart, id);
         // Prefer a clear computed PCB footprint; allow a manual off-board fallback in free mode.
-        const position =
+        const position = snapPosition(project,
           action.position ??
           suggestPlacements(project, component)[0]?.position ??
-          ([6, 1, 0] as Vec3);
+          ([6, 1, 0] as Vec3));
         const assessment = assessPosition(project, component, position);
         if (!assessment.valid)
           throw new Error(assessment.error ?? 'Unsupported component placement.');
@@ -248,9 +278,9 @@ export function previewAIChanges(current: Project, actions: readonly AIAction[])
       case 'move_component': {
         const part = project.components.find((c) => c.id === action.component_id);
         if (!part || !movable(part)) throw new Error('Target component is missing or fixed.');
-        const assessment = assessPosition(project, part, action.position);
+        const assessment = assessPosition(project, part, snapPosition(project,action.position));
         if (!assessment.valid) throw new Error(assessment.error ?? 'Invalid placement.');
-        part.position = [...action.position];
+        part.position = snapPosition(project,action.position);
         project.selectedComponentId = part.id;
         summary.push(`Move ${part.name} to ${action.position.join(', ')} (world units)`);
         break;
@@ -277,6 +307,6 @@ export function previewAIChanges(current: Project, actions: readonly AIAction[])
       }
     }
   }
-  project.schemaVersion = 2;
+  project = migrateProject(project);
   return { project, summary, createNew: false };
 }
