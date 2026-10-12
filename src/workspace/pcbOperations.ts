@@ -1,5 +1,6 @@
 import { Vector3 } from 'three';
 import type { HardwareComponent, Project, Vec3 } from '../types/workspace';
+import { logicalPorts } from '../schematic/model';
 import { assessPosition, movable } from '../lib/transforms';
 import {
   boardMatrix,
@@ -94,7 +95,15 @@ export function applyPCBOperation(current: Project, op: PCBOperation): Project {
   }
   if (op.footprint) {
     if (!validFootprint(op.footprint)) throw new Error('Invalid footprint.');
-    c.footprint = { ...op.footprint, provenance: 'user-configured' };
+    // Pad layer and schematic bindings must be explicit; no inferred physical pin mapping.
+    const copperIds = new Set(normalizeBoard(p.boardConfiguration!).stackup!
+      .filter((layer) => layer.kind === 'copper').map((layer) => layer.id));
+    const ports = new Set(logicalPorts(c).map((port) => port.id));
+    if (op.footprint.pads?.some((pad) => !copperIds.has(pad.layerId)))
+      throw new Error('Footprint pad references a missing or non-copper layer.');
+    if (op.footprint.pads?.some((pad) => pad.portId && !ports.has(pad.portId)))
+      throw new Error('Footprint pad references an unknown schematic terminal.');
+    c.footprint = structuredClone({ ...op.footprint, provenance: 'user-configured' });
   }
   if (op.side) {
     if (

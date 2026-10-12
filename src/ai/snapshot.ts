@@ -174,6 +174,7 @@ export interface WorkspaceSnapshot {
   omitted: {
     components: number;
     ports: number;
+    pads: number;
     wires: number;
     nets: number;
     findings: number;
@@ -288,6 +289,9 @@ export function buildWorkspaceSnapshot(
             length: fp.length,
             width: fp.width,
             provenance: fp.provenance,
+            ...(fp.pads?.length ? { pads: fp.pads.slice(0, 8).map(({id, x, z, length, width, shape, layerId, portId}) => ({
+              id, x, z, length, width, shape, layerId, ...(portId ? { portId } : {}),
+            })) } : {}),
           },
           verification: part?.verificationStatus ?? 'concept',
           datasheet: part?.datasheetUrl ?? null,
@@ -326,6 +330,7 @@ export function buildWorkspaceSnapshot(
     omitted: {
       components: Math.max(0, p.components.length - 64),
       ports: 0,
+      pads: p.components.reduce((sum, c) => sum + Math.max(0, (c.footprint?.pads?.length ?? 0) - 8), 0),
       wires: Math.max(0, (p.connections?.length ?? 0) - 128),
       nets: 0,
       findings: Math.max(0, findings.length - 64),
@@ -348,6 +353,12 @@ export function buildWorkspaceSnapshot(
       snapshot.omitted.firmwareCharacters += snapshot.firmware.source.length;
       snapshot.firmware.source = '';
     } else {
+      const padOwner = [...snapshot.components].reverse().find((c) => c.footprint.pads?.length);
+      if (padOwner) {
+        padOwner.footprint.pads!.pop();
+        snapshot.omitted.pads++;
+        continue;
+      }
       const c = [...snapshot.components].reverse().find((c) => c.ports.length);
       if (c) {
         snapshot.omitted.ports += c.ports.length;

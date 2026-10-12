@@ -1,7 +1,7 @@
 import { migrateProject } from '../workspace/migrations';
 import { validFootprint } from '../workspace/boardGeometry';
 import { validPosition } from './transforms';
-import { validateConnection } from '../schematic/model';
+import { validateConnection, logicalPorts } from '../schematic/model';
 import { getPart } from '../catalog/catalog';
 import { validBoardConfiguration } from '../workspace/boardSpecifications';
 import { isBoardTemplate } from '../workspace/boardTemplates';
@@ -180,6 +180,16 @@ export function parseProject(text: string): Project {
     demoProject.components.some((c) => !ids.has(c.id))
   )
     throw new Error('The project is missing required demo components.');
+  // Import only explicit, existing pad-to-terminal bindings; never infer a
+  // manufacturer physical pin from a symbolic terminal or a package drawing.
+  const copper = new Set((p.boardConfiguration?.stackup ?? []).filter((l) => l.kind === 'copper').map((l) => l.id));
+  for (const c of components) {
+    const pads = c.footprint?.pads ?? [];
+    if (!pads.length) continue;
+    const ports = new Set(logicalPorts(c).map((port) => port.id));
+    if (pads.some((pad) => !copper.has(pad.layerId) || (pad.portId && !ports.has(pad.portId))))
+      throw new Error('Project contains invalid footprint pad layer or terminal references.');
+  }
   // Old projects legitimately have no schematic data. New data must be validated
   // rather than silently dropping malformed/dangling wires on import.
   let safeConnections: Project['connections'];

@@ -1,4 +1,5 @@
 import { PCBSettings } from './PCBSettings';
+import { PCBLayoutPreview } from './PCBLayoutPreview';
 import { normalizeBoard } from './boardGeometry';
 import { useState } from 'react';
 import type { HardwareComponent, Project } from '../types/workspace';
@@ -204,6 +205,7 @@ export function SelectedBoardSpecifications({
   return (
     <>
       <BoardSpecifications spec={spec} component={component} />
+      {component.id === 'pcb' && <PCBLayoutPreview project={project} />}
       {component.id === 'pcb' && (
         <BoardConfigurationEditor
           key={JSON.stringify(project.boardConfiguration)}

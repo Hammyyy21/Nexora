@@ -1,4 +1,6 @@
 import { footprintGap } from './placement';
+import { pointInside } from '../workspace/boardGeometry';
+import { placedPads } from '../workspace/pcbLayout';
 import { boardSpecification } from '../workspace/boardSpecifications';
 import { getPart } from '../catalog/catalog';
 import { reviewElectrical } from './electrical';
@@ -137,6 +139,25 @@ export function reviewDesign(project: Project): DesignFinding[] {
         details: `Catalog verification status: ${part.verificationStatus}. Confirm the exact part datasheet before electrical integration.`,
         componentId: component.id,
       });
+  }
+  if (board && project.boardConfiguration) {
+    for (const pad of placedPads(project)) {
+      if (!pad.layer) findings.push({
+        id: `pad-layer:${pad.componentId}:${pad.id}`,
+        severity: 'warning', status: 'fail', componentId: pad.componentId,
+        title: `${pad.reference}: pad layer missing`,
+        details: `Pad ${pad.id} references ${pad.layerId}, which is not a configured copper layer.`,
+        remedy: 'Reassign this pad to an existing copper layer in the component footprint editor.',
+      });
+      if (pad.outline.some((corner) => !pointInside(corner, project.boardConfiguration!)))
+        findings.push({
+          id: `pad-outline:${pad.componentId}:${pad.id}`,
+          severity: 'warning', status: 'fail', componentId: pad.componentId,
+          title: `${pad.reference}: copper pad outside board`,
+          details: `Pad ${pad.id} extends beyond the configured PCB outline.`,
+          remedy: 'Reposition the component or edit the pad geometry.',
+        });
+    }
   }
   if (board) {
     const parts = project.components.filter((c) => c.id !== 'pcb' && c.type !== 'housing');

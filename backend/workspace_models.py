@@ -78,11 +78,34 @@ class BoardConfiguration(WorkspaceModel):
             raise ValueError('Invalid layers')
         return self
 
+class FootprintPad(WorkspaceModel):
+    id: str = Field(min_length=1, max_length=100, pattern=r'^[a-zA-Z0-9-]+$')
+    x: float = Field(ge=-200, le=200)
+    z: float = Field(ge=-200, le=200)
+    length: float = Field(ge=0.1, le=200)
+    width: float = Field(ge=0.1, le=200)
+    shape: Literal['rect', 'circle']
+    layerId: str = Field(min_length=1, max_length=100, pattern=r'^[a-zA-Z0-9-]+$')
+    portId: str | None = Field(default=None, min_length=1, max_length=100)
+
 class Footprint(WorkspaceModel):
     name: str = Field(min_length=1, max_length=80)
     length: float = Field(ge=0.1, le=200)
     width: float = Field(ge=0.1, le=200)
     provenance: Literal['visual-estimate', 'user-configured']
+    pads: list[FootprintPad] | None = Field(default=None, max_length=8)
+
+    @model_validator(mode='after')
+    def valid_pads(self):
+        pads = self.pads or []
+        if len({p.id for p in pads}) != len(pads):
+            raise ValueError('Duplicate pad identifiers')
+        for p in pads:
+            if abs(p.x) + p.length / 2 > self.length / 2 + 1e-6 or abs(p.z) + p.width / 2 > self.width / 2 + 1e-6:
+                raise ValueError('Pad outside footprint')
+            if p.shape == 'circle' and p.length != p.width:
+                raise ValueError('Circle pad must have equal dimensions')
+        return self
 
 class Entity(WorkspaceModel):
     kind: Literal['component', 'net', 'region', 'firmware']
@@ -164,6 +187,7 @@ class Firmware(WorkspaceModel):
 class Omitted(WorkspaceModel):
     components: int = Field(ge=0)
     ports: int = Field(ge=0)
+    pads: int = Field(default=0, ge=0)
     wires: int = Field(ge=0)
     nets: int = Field(ge=0)
     findings: int = Field(ge=0)

@@ -220,6 +220,12 @@ export function PCBSettings({
               ))}
             </select>
           </label>
+          <label>Visible in PCB layout
+            <input type="checkbox" aria-label={`Layer ${i + 1} visible`}
+              checked={layer.visible}
+              onChange={(e) => onChange({ ...c, stackup: c.stackup!.map((l) =>
+                l.id === layer.id ? { ...l, visible: e.target.checked } : l) })}/>
+          </label>
           {layer.kind === 'mechanical' && (
             <button
               type="button"

@@ -16,11 +16,25 @@ export interface BoardLayer {
   side: BoardSide | 'internal' | 'all';
   visible: boolean;
 }
+/** Copper pad defined in the component's local X/Z plane (millimeters).
+ * portId binds explicitly to a schematic terminal; omission means unassigned.
+ * Pads are user-authored geometry, NOT manufacturer-verified footprints. */
+export interface FootprintPad {
+  id: string;
+  x: number;
+  z: number;
+  length: number;
+  width: number;
+  shape: 'rect' | 'circle';
+  layerId: string;
+  portId?: string;
+}
 export interface Footprint {
   name: string;
   length: number;
   width: number;
   provenance: 'visual-estimate' | 'user-configured';
+  pads?: FootprintPad[];
 }
 export const finite = (n: unknown, min: number, max: number): n is number =>
   typeof n === 'number' && Number.isFinite(n) && n >= min && n <= max;
@@ -40,13 +54,29 @@ export function validFootprint(f: unknown): f is Footprint {
   if (!f || typeof f !== 'object') return false;
   const v = f as Footprint;
   return (
-    Object.keys(v).every((k) => ['name', 'length', 'width', 'provenance'].includes(k)) &&
+    Object.keys(v).every((k) => ['name', 'length', 'width', 'provenance', 'pads'].includes(k)) &&
     typeof v.name === 'string' &&
     v.name.length > 0 &&
     v.name.length <= 80 &&
     finite(v.length, 0.1, 200) &&
     finite(v.width, 0.1, 200) &&
-    ['visual-estimate', 'user-configured'].includes(v.provenance)
+    ['visual-estimate', 'user-configured'].includes(v.provenance) &&
+    (v.pads === undefined || (
+      Array.isArray(v.pads) && v.pads.length <= 64 &&
+      new Set(v.pads.map((p) => p?.id)).size === v.pads.length &&
+      v.pads.every((p) =>
+        p && Object.keys(p).every((key) =>
+          ['id', 'x', 'z', 'length', 'width', 'shape', 'layerId', 'portId'].includes(key)) &&
+        validEntityId(p.id) && validEntityId(p.layerId) &&
+        (p.portId === undefined || (typeof p.portId === 'string' && p.portId.length > 0 && p.portId.length <= 100)) &&
+        ['rect', 'circle'].includes(p.shape) &&
+        finite(p.x, -200, 200) && finite(p.z, -200, 200) &&
+        finite(p.length, 0.1, 200) && finite(p.width, 0.1, 200) &&
+        Math.abs(p.x) + p.length / 2 <= v.length / 2 + 1e-6 &&
+        Math.abs(p.z) + p.width / 2 <= v.width / 2 + 1e-6 &&
+        (p.shape !== 'circle' || p.length === p.width)
+      )
+    ))
   );
 }
 export function defaultLayers(count = 2): BoardLayer[] {

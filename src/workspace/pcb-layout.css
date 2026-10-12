@@ -1,0 +1,19 @@
+.pcb-layout-preview { margin: 12px 16px; min-width: 0; padding: 12px; background: #111e2e; border: 1px solid #31435d; border-radius: 8px; }
+.pcb-layout-preview h3 { font-size: 13px; margin: 0 0 8px; }
+.pcb-layout-preview p, .pcb-layout-preview small { font-size: 11px; color: #9db2cc; line-height: 1.5; }
+.pcb-layout-preview label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; margin: 10px 0; }
+.pcb-layout-preview select { min-width: 0; max-width: 66%; background: #172940; border: 1px solid #425b7a; border-radius: 4px; padding: 5px; color: #f0f6ff; }
+.pcb-layout-preview svg { display: block; width: 100%; background: #0b1625; border: 1px solid #2b3c53; border-radius: 6px; }
+.pcb-layout-outline { fill: #174638; stroke: #7fd6b0; stroke-width: 0.7; }
+.pcb-layout-hole { fill: #0b1625; stroke: #8ab7d5; stroke-width: 0.4; }
+.pcb-layout-keepout { fill: #cb606050; stroke: #e78181; stroke-width: 0.3; stroke-dasharray: 2 1; }
+.pcb-layout-part { cursor: pointer; }
+.pcb-layout-part polygon { fill: #95a9c71a; stroke: #bdd7fa; stroke-width: 0.45; }
+.pcb-layout-part:hover polygon { stroke: #ffffff; stroke-width: 0.85; }
+.pcb-layout-part text { fill: #f3f8fe; paint-order: stroke; stroke: #0b1625; stroke-width: 0.5; pointer-events: none; }
+.pcb-layout-pad polygon { fill: #e9b960; stroke: #ffe8a6; stroke-width: 0.35; pointer-events: none; }
+.pcb-layout-pad.bottom polygon { fill: #69abec; stroke: #b8e0ff; }
+.pcb-layout-pad circle { fill: #1c2d44; pointer-events: none; }
+.pcb-pad-editor { border: 1px solid #33455f; padding: 8px; margin: 10px 0; }
+.pcb-pad-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(94px, 1fr)); gap: 8px; margin: 10px 0; border-bottom: 1px solid #31435d; }
+.pcb-pad-row label { margin: 0 0 8px; }

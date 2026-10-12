@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Vector3 } from 'three';
 import type { HardwareComponent, Vec3 } from '../types/workspace';
 import { useWorkspaceStore } from '../store/useWorkspaceStore';
-import { boardMatrix, componentFootprint } from './boardGeometry';
+import { boardMatrix, componentFootprint, normalizeBoard, type FootprintPad } from './boardGeometry';
+import { logicalPorts } from '../schematic/model';
 import { assessPosition, movable } from '../lib/transforms';
 export function PCBComponentEditor({ component: c }: { component: HardwareComponent }) {
   const s = useWorkspaceStore();
@@ -14,6 +15,17 @@ export function PCBComponentEditor({ component: c }: { component: HardwareCompon
     ? new Vector3(...c.position).applyMatrix4(boardMatrix(b).invert())
     : new Vector3(...c.position);
   const assessment = assessPosition(s.currentProject, c, c.position);
+  // Legacy/demo projects may have no editable PCB configuration. Keep the inspector usable.
+  const copperLayers = s.currentProject.boardConfiguration
+    ? normalizeBoard(s.currentProject.boardConfiguration).stackup!.filter((layer) => layer.kind === 'copper')
+    : [];
+  const terminals = logicalPorts(c);
+  const updatePad = (id: string, patch: Partial<FootprintPad>) =>
+    setFootprint((old) => ({
+      ...old,
+      pads: (old.pads ?? []).map((pad) => pad.id === id ? { ...pad, ...patch } : pad),
+    }));
+
   return (
     <section className="board-configuration" aria-label="PCB component placement">
       <h3>PCB placement</h3>
@@ -100,6 +112,70 @@ export function PCBComponentEditor({ component: c }: { component: HardwareCompon
             />
           </label>
         ))}
+        <fieldset className="pcb-pad-editor">
+          <legend>Copper pads (user-configured)</legend>
+          <p>Local X/Z in mm. Assign an exact terminal to associate a pad with the schematic. No traces are routed.</p>
+          {(footprint.pads ?? []).map((pad, i) => (
+            <div className="board-hole-editor pcb-pad-row" key={pad.id}>
+              <strong>Pad {i + 1}</strong>
+              <label>Layer
+                <select aria-label={`Pad ${i + 1} layer`} value={pad.layerId}
+                  onChange={(e) => updatePad(pad.id, { layerId: e.target.value })}>
+                  {copperLayers.map((layer) => (
+                    <option key={layer.id} value={layer.id}>{layer.name} ({layer.side})</option>
+                  ))}
+                  {!copperLayers.some((layer) => layer.id === pad.layerId) &&
+                    <option value={pad.layerId}>Missing: {pad.layerId}</option>}
+                </select>
+              </label>
+              <label>Schematic terminal
+                <select aria-label={`Pad ${i + 1} terminal`} value={pad.portId ?? ''}
+                  onChange={(e) => updatePad(pad.id, { portId: e.target.value || undefined })}>
+                  <option value="">Unassigned</option>
+                  {terminals.map((port) => (
+                    <option key={port.id} value={port.id}>
+                      {port.label} ({port.verification === 'physical' ? 'documented pin' : 'conceptual'})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {(['x','z','length','width'] as const).map((axis) => (
+                <label key={axis}>{axis.toUpperCase()} (mm)
+                  <input aria-label={`Pad ${i + 1} ${axis}`} type="number" step="0.1"
+                    value={Number.isFinite(pad[axis]) ? pad[axis] : ''}
+                    onChange={(e) => updatePad(pad.id, {
+                      [axis]: e.target.valueAsNumber,
+                      ...(pad.shape === 'circle' && (axis === 'length' || axis === 'width')
+                        ? { length: e.target.valueAsNumber, width: e.target.valueAsNumber } : {}),
+                    })}/>
+                </label>
+              ))}
+              <label>Shape
+                <select aria-label={`Pad ${i + 1} shape`} value={pad.shape}
+                  onChange={(e) => {
+                    const shape = e.target.value as FootprintPad['shape'];
+                    updatePad(pad.id, { shape, ...(shape === 'circle' ? { width: pad.length } : {}) });
+                  }}>
+                  <option value="rect">Rectangle</option>
+                  <option value="circle">Circle</option>
+                </select>
+              </label>
+              <button type="button" onClick={() => setFootprint((old) => ({
+                ...old, pads: (old.pads ?? []).filter((p) => p.id !== pad.id),
+              }))}>Remove pad</button>
+            </div>
+          ))}
+          <button type="button" disabled={!!(!copperLayers.length || (footprint.pads?.length ?? 0) >= 64)}
+            onClick={() => setFootprint((old) => ({
+              ...old, pads: [...(old.pads ?? []), {
+                id: `pad-${crypto.randomUUID()}`, x: 0, z: 0,
+                length: Math.min(1, old.length, old.width),
+                width: Math.min(1, old.length, old.width), shape: 'rect', layerId: copperLayers[0].id,
+              }],
+            }))}>
+            Add copper pad
+          </button>
+        </fieldset>
         <button
           className="button"
           onClick={() =>
