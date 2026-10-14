@@ -148,3 +148,43 @@ it('uses immediate camera transitions when reduced motion is enabled', () => {
   act(() => workspace.getState().requestCamera('fit'));
   expect(mocks.durations.mock.calls.flat()).toEqual([0, 0, 0, 0]);
 });
+
+it('fits only the PCB during placement, reframes on resize and preserves the pose after confirmation', () => {
+  workspace.getState().beginPlacement('tmp102');
+  const view = render(<CameraController />);
+  const camera = mocks.state.camera as PerspectiveCamera;
+  const board = workspace.getState().currentProject.components.find((c) => c.id === 'pcb')!;
+  for (const [width, height] of [
+    [900, 600],
+    [600, 600],
+    [390, 350],
+  ]) {
+    mocks.state.size = { width, height };
+    camera.aspect = width / height;
+    view.rerender(<CameraController />);
+    camera.lookAt(mocks.control.target as Vector3);
+    camera.updateMatrixWorld();
+    for (const x of [-1, 1])
+      for (const z of [-1, 1]) {
+        const point = new Vector3(
+          board.position[0] + (x * board.dimensions[0]) / 2,
+          board.position[1],
+          board.position[2] + (z * board.dimensions[2]) / 2,
+        ).project(camera);
+        expect(Math.abs(point.x)).toBeLessThan(1);
+        expect(Math.abs(point.y)).toBeLessThan(1);
+      }
+  }
+  const count = mocks.frames.mock.calls.length;
+  act(() => workspace.getState().movePlacement([1, 1, 1]));
+  expect(mocks.frames).toHaveBeenCalledTimes(count);
+  const gl = mocks.state.gl as { domElement: HTMLCanvasElement };
+  gl.domElement.dispatchEvent(new Event('pointerdown'));
+  expect(mocks.control.enabled).toBe(true);
+  camera.position.set(4, 8, -6);
+  act(() => workspace.getState().confirmPlacement());
+  mocks.state.size = { width: 1100, height: 600 };
+  view.rerender(<CameraController />);
+  expect(camera.position.toArray()).toEqual([4, 8, -6]);
+  expect(mocks.frames).toHaveBeenCalledTimes(count);
+});

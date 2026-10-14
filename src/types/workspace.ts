@@ -60,6 +60,8 @@ export interface EngineeringInput {
   maxTemperatureC?: number;
 }
 export interface Project {
+  /** Optional portable plan envelope; live mentor state stays in the project archive. */
+  buildPlan?: import('../ai/planner/schema').BuildPlan;
   engineeringInputs?: Record<string, EngineeringInput>;
   firmwareSource?: string;
   /** Conceptual pin-to-pin netlist, not a verified physical layout or routed PCB. */

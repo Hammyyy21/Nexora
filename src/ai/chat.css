@@ -1,0 +1,109 @@
+.chat-message {
+  padding: 8px 0;
+  color: #a5bad7;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.chat-message > strong {
+  display: block;
+  color: #8595b0;
+  font-size: 10px;
+  margin-bottom: 3px;
+}
+.chat-user-text {
+  white-space: pre-wrap;
+  color: #d9e6f8;
+}
+.chat-message[data-animate='true'].user {
+  animation: chat-enter 160ms ease-out;
+}
+/* One paint reveal of a completed response; no token timers or layout changes. */
+.chat-message[data-animate='true'].assistant {
+  animation: chat-reveal 320ms ease-out;
+}
+.chat-markdown pre {
+  overflow-x: auto;
+  white-space: pre;
+  padding: 12px;
+  border-radius: 5px;
+  background: #0b1320;
+}
+.chat-markdown p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.chat-markdown p strong {
+  display: inline;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 600;
+}
+.chat-markdown ul,
+.chat-markdown ol {
+  padding-left: 20px;
+}
+.chat-markdown table {
+  display: block;
+  overflow: auto;
+  border-collapse: collapse;
+}
+.chat-markdown th,
+.chat-markdown td {
+  padding: 6px;
+  border: 1px solid #34526d;
+}
+.chat-markdown a {
+  color: #87b7ff;
+}
+.command-input textarea {
+  flex: 1;
+  min-width: 0;
+  max-height: 120px;
+  resize: vertical;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #d9e6f8;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.command-input textarea:focus-visible {
+  outline: 1px solid #30d7e8;
+  border-radius: 3px;
+}
+.guide-input-hint {
+  color: #91a3bf;
+  font-size: 10px;
+  order: 3;
+}
+@keyframes chat-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes chat-reveal {
+  from {
+    opacity: 0.3;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-message[data-animate='true'] {
+    animation: none !important;
+  }
+}
+
+/* Keep the conversation as the scroll container so reading position survives replies. */
+.tools-panel .assistant-response { flex: 1 1 180px; }
+.tools-panel .response-messages { min-height: 0; }

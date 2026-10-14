@@ -1,5 +1,6 @@
+from backend.plan_models import PlanBody
 from backend.workspace_models import WorkspaceSnapshot, BoardConfiguration, Footprint, FindingExplanation
-from typing import Literal
+from typing import Literal, Annotated
 import math
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -104,7 +105,41 @@ class Connection(StrictModel):
     to: Endpoint
 
 
+MemoryText = Annotated[str, Field(max_length=500)]
+
+
+class ProjectIntent(StrictModel):
+    primary_goal: str = Field(default="", max_length=500)
+    intended_function: str = Field(default="unknown", max_length=500)
+    requirements: list[MemoryText] = Field(default_factory=list, max_length=12)
+    decisions: list[MemoryText] = Field(default_factory=list, max_length=12)
+    corrections: list[MemoryText] = Field(default_factory=list, max_length=12)
+    unknowns: list[MemoryText] = Field(default_factory=list, max_length=12)
+    proposed_next_steps: str = Field(default="", max_length=1600)
+    omitted_entries: int = Field(default=0, ge=0)
+    total_messages: int = Field(default=0, ge=0)
+
+
+class BuildPlan(PlanBody):
+    goal: ProjectIntent
+
+
+class ConversationOmitted(StrictModel):
+    messages: int = Field(default=0, ge=0)
+    characters: int = Field(default=0, ge=0)
+
+
+class ComponentRole(StrictModel):
+    id: str = Field(max_length=100)
+    role: str = Field(max_length=500)
+
+
 class Context(StrictModel):
+    build_plan: BuildPlan | None = None
+    context_omitted: list[Annotated[str, Field(max_length=100)]] = Field(default_factory=list, max_length=8)
+    project_intent: ProjectIntent | None = None
+    conversation_omitted: ConversationOmitted | None = None
+    component_roles: list[ComponentRole] = Field(default_factory=list, max_length=64)
     workspace_snapshot: WorkspaceSnapshot | None = None
     connections: list[Connection] | None = Field(default=None, max_length=128)
     board_summary: str | None = Field(default=None, max_length=6000)
@@ -126,6 +161,7 @@ class Context(StrictModel):
 class ChatRequest(StrictModel):
     messages: list[Message] = Field(min_length=1, max_length=10)
     context: Context = Field(default_factory=Context)
+    explanation_mode: Literal["beginner", "engineer"] = "beginner"
     response_length: Literal["auto", "concise", "detailed"] = "auto"
 
     @model_validator(mode="after")

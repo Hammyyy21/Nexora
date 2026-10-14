@@ -1,10 +1,14 @@
+import { BuildPlan } from '../../ai/planner/BuildPlan';
+import { useProjectsStore } from '../../projects/store';
+import { emptyMemory } from '../../ai/memory';
 import { InspectionFindings } from '../../ai/InspectionFindings';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowUp, ChevronDown, LoaderCircle, Sparkles, X } from 'lucide-react';
 import { useWorkspaceStore as useStore } from '../../store/useWorkspaceStore';
 import { useGuideStore } from '../../ai/store';
 import { IconButton } from '../ui/IconButton';
+import { ChatMessage } from '../../ai/ChatMessage';
 export function CommandBar({
   docked = false,
   active = true,
@@ -13,13 +17,21 @@ export function CommandBar({
   active?: boolean;
 }) {
   const s = useStore();
-  const [input, setInput] = useState('');
+  const projects = useProjectsStore();
+  const memory = projects.mentors?.[s.currentProject.id] ?? emptyMemory();
+  const input = memory.draft;
+  const setInput = (draft: string) => projects.setMentor(s.currentProject.id, { ...memory, draft });
   const guide = useGuideStore();
   const busy = guide.busy;
   const title = guide.mode === 'ai' ? 'AI Guide' : 'Demo Assistant';
   const { open, setOpen } = guide;
-  const inputRef = useRef<HTMLInputElement>(null);
-  const messagesEnd = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const messages = useRef<HTMLDivElement>(null);
+  const follow = useRef(true);
+  const initialMessages = useRef(new Set(s.demoAssistantMessages.map((m) => m.id)));
+  useEffect(() => {
+    follow.current = true;
+  }, [s.currentProject.id]);
   useEffect(() => {
     // Keep keyboard focus in the primary navigation when it opens the AI panel.
     // The old role="tab" check alone misses the new button-based navigation.
@@ -33,17 +45,18 @@ export function CommandBar({
       void useGuideStore.getState().check();
   }, []);
   useEffect(() => {
-    if (active) messagesEnd.current?.scrollIntoView({ block: 'nearest' });
-  }, [s.demoAssistantMessages.length, busy, active]);
-  async function submit(text: string, local = false) {
-    if (!text.trim() || busy) return;
+    const node = messages.current;
+    if (active && follow.current && node) node.scrollTop = node.scrollHeight;
+  }, [s.demoAssistantMessages.length, busy, active, s.currentProject.id]);
+  function submit(text: string, local = false, fromInput = false) {
+    if (!text.trim() || useGuideStore.getState().busy) return;
     const projectId = useStore.getState().currentProject.id;
-    s.addMessage('user', text.trim());
-    setInput('');
+    if (fromInput) {
+      const latest = useProjectsStore.getState().mentors?.[projectId] ?? emptyMemory();
+      useProjectsStore.getState().setMentor(projectId, { ...latest, draft: '' });
+    }
     setOpen(true);
-    const reply = await guide.ask(text, { local });
-    if (reply && useStore.getState().currentProject.id === projectId)
-      useStore.getState().addMessage('assistant', reply);
+    void guide.ask(text, { local: local || undefined });
   }
   return (
     <div className="command-area">
@@ -73,8 +86,23 @@ export function CommandBar({
                 </IconButton>
               )}
             </div>
-            <div className="response-messages" aria-live="polite">
-              <button className="button" disabled={busy} onClick={()=>void submit("Inspect my entire project.")}>Inspect entire project</button>
+            <div
+              className="response-messages"
+              aria-live="polite"
+              ref={messages}
+              onScroll={(e) => {
+                const node = e.currentTarget;
+                follow.current = node.scrollHeight - node.scrollTop - node.clientHeight < 64;
+              }}
+            >
+              <BuildPlan key={s.currentProject.id} />
+              <button
+                className="button"
+                disabled={busy}
+                onClick={() => void submit('Inspect my entire project.')}
+              >
+                Inspect entire project
+              </button>
               {!s.demoAssistantMessages.length && (
                 <p className="assistant">
                   Ask about the selected component or your project. Choose a local shortcut to
@@ -82,11 +110,18 @@ export function CommandBar({
                 </p>
               )}
               {s.demoAssistantMessages.map((m) => (
-                <p key={m.id} className={m.role}>
-                  <strong>{m.role === 'user' ? 'You' : 'Nexora'}</strong>
-                  {m.text}
-                </p>
+                <ChatMessage
+                  key={m.id}
+                  message={m}
+                  reducedMotion={s.reducedMotion}
+                  animate={!initialMessages.current.has(m.id)}
+                />
               ))}
+              {guide.failedRequest?.projectId === s.currentProject.id && (
+                <button className="button" disabled={busy} onClick={() => void guide.retry()}>
+                  Retry last message
+                </button>
+              )}
               {busy && (
                 <p className="assistant">
                   <LoaderCircle size={13} className="spin" />
@@ -102,7 +137,16 @@ export function CommandBar({
                       <li key={i}>{line}</li>
                     ))}
                   </ul>
-                  {guide.pending.actions.some(a=>['configure_board','update_component','duplicate_component'].includes(a.type)) && <details><summary>Review PCB operation data</summary><pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{JSON.stringify(guide.pending.actions,null,2)}</pre></details>}
+                  {guide.pending.actions.some((a) =>
+                    ['configure_board', 'update_component', 'duplicate_component'].includes(a.type),
+                  ) && (
+                    <details>
+                      <summary>Review PCB operation data</summary>
+                      <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
+                        {JSON.stringify(guide.pending.actions, null, 2)}
+                      </pre>
+                    </details>
+                  )}
                   {guide.pending.actions
                     .filter((a) => a.type === 'generate_firmware')
                     .map(
@@ -134,7 +178,6 @@ export function CommandBar({
                   </div>
                 </section>
               )}
-              <div ref={messagesEnd} />
             </div>
           </motion.div>
         )}
@@ -170,6 +213,17 @@ export function CommandBar({
           </select>
         </label>
         <label>
+          Explanation style{' '}
+          <select
+            aria-label="Explanation style"
+            value={guide.explanationMode}
+            onChange={(e) => guide.setExplanationMode(e.target.value as 'beginner' | 'engineer')}
+          >
+            <option value="beginner">Beginner Mode</option>
+            <option value="engineer">Engineer Mode</option>
+          </select>
+        </label>
+        <label>
           Response length{' '}
           <select
             aria-label="AI response length"
@@ -194,22 +248,30 @@ export function CommandBar({
       </div>
       {guide.mode === 'ai' && (
         <p className="guide-disclosure">
-          Sends this question, component names/IDs and positions to OpenAI. Firmware source is not
-          sent. Proposed edits need your approval.
+          Sends recent conversation, project goals, catalog context, engineering findings and a
+          bounded workspace snapshot, including redacted firmware source, to the AI service. Do not
+          enter credentials. Proposed edits need your approval.
         </p>
       )}
       <form
         className="command-input"
         onSubmit={(e) => {
           e.preventDefault();
-          submit(input);
+          submit(input, false, true);
         }}
       >
         <Sparkles size={19} />
-        <input
+        <textarea
           ref={inputRef}
+          rows={2}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+              e.preventDefault();
+              submit(input, false, true);
+            }
+          }}
           placeholder={
             guide.mode === 'ai'
               ? 'Ask AI to add, move, remove or explain hardware…'
@@ -217,12 +279,16 @@ export function CommandBar({
           }
           aria-label={`Ask ${title}`}
           maxLength={4000}
+          aria-describedby="guide-input-hint"
         />
         <span className="local-badge">{guide.mode === 'ai' ? 'AI' : 'DEMO'}</span>
         <button type="submit" aria-label="Send command" disabled={busy || !input.trim()}>
           {busy ? <LoaderCircle size={17} className="spin" /> : <ArrowUp size={18} />}
         </button>
       </form>
+      <span id="guide-input-hint" className="guide-input-hint">
+        Enter to send · Shift+Enter for a new line
+      </span>
       <div className="suggestions">
         <span>LOCAL SHORTCUTS</span>
         {['Show exploded view', 'Focus on the microcontroller', 'Open firmware'].map((text) => (

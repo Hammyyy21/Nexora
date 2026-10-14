@@ -1,0 +1,81 @@
+.build-plan {
+  border: 1px solid var(--border, #34465d);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 0 0 12px;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.build-plan header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+.build-plan header span,
+.build-plan small,
+.plan-scope {
+  color: #9eb0c8;
+}
+.build-plan p {
+  margin: 8px 0;
+  white-space: normal;
+}
+.build-plan ul {
+  margin: 6px 0 10px;
+  padding-left: 18px;
+}
+.build-plan details {
+  margin-top: 10px;
+}
+.build-plan summary {
+  cursor: pointer;
+  color: #d3e3fb;
+  padding: 5px 0;
+}
+.build-plan .build-step {
+  border-top: 1px solid #34465d;
+  padding-top: 5px;
+}
+.plan-status {
+  display: block;
+  font-size: 10px;
+  color: #aac2e2;
+}
+.plan-status.blocked {
+  color: #f5be83;
+}
+.plan-status.completed {
+  color: #8ed3b8;
+}
+.build-plan textarea {
+  display: block;
+  resize: vertical;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid #34465d;
+  border-radius: 5px;
+  background: #101a28;
+  color: #e2eaf5;
+  padding: 8px;
+  font: inherit;
+  margin: 5px 0 8px;
+}
+.plan-actions,
+.build-plan form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.build-plan form label,
+.build-plan form p {
+  width: 100%;
+}
+.build-plan .button {
+  white-space: normal;
+  text-align: left;
+}

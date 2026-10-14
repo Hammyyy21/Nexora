@@ -15,7 +15,13 @@ export function CameraController() {
   const request = useStore((s) => s.cameraRequest);
   const tool = useStore((s) => s.activeTool);
   const reduced = useStore((s) => s.reducedMotion);
-  const appliedRequest = useRef<{ request: number; camera: typeof camera } | null>(null);
+  const placing = useStore((s) => Boolean(s.placement));
+  const appliedRequest = useRef<{
+    request: number;
+    camera: typeof camera;
+    width: number;
+    height: number;
+  } | null>(null);
   // StrictMode replays mount effects; allow its second setup to restart the killed tween.
   useEffect(
     () => () => {
@@ -27,13 +33,23 @@ export function CameraController() {
     const control = ref.current;
     if (!control || size.width <= 0 || size.height <= 0) return;
     // Layout changes update projection through R3F, but must not reset an orbited pose.
-    if (appliedRequest.current?.request === request && appliedRequest.current.camera === camera)
+    if (
+      appliedRequest.current?.request === request &&
+      appliedRequest.current.camera === camera &&
+      (!placing ||
+        (appliedRequest.current.width === size.width &&
+          appliedRequest.current.height === size.height))
+    )
       return;
-    appliedRequest.current = { request, camera };
+    const resizingPlacement = placing && appliedRequest.current?.request === request;
+    appliedRequest.current = { request, camera, width: size.width, height: size.height };
     const s = useStore.getState();
+    const board = s.currentProject.components.find((c) => c.id === 'pcb');
+    const framed = placing && board ? [{ ...board, visible: true }] : s.currentProject.components;
     const geometryPoints: Vector3[] = [];
-    for (const c of s.currentProject.components) {
-      if (!c.visible || (s.cameraView === 'focus' && c.id !== s.selectedComponentId)) continue;
+    for (const c of framed) {
+      if (!c.visible || (!placing && s.cameraView === 'focus' && c.id !== s.selectedComponentId))
+        continue;
       const object = scene?.getObjectByName(`geometry:${c.id}`);
       if (!object) continue;
       object.updateWorldMatrix(true, true);
@@ -44,9 +60,9 @@ export function CameraController() {
           for (const z of [bounds.min.z, bounds.max.z]) geometryPoints.push(new Vector3(x, y, z));
     }
     const { target, position, points, right, up } = cameraFrame(
-      s.placement ? [...s.currentProject.components, s.placement] : s.currentProject.components,
+      framed,
       s.activeViewMode,
-      s.cameraView,
+      placing ? 'fit' : s.cameraView,
       s.selectedComponentId,
       size.width / Math.max(1, size.height),
       camera instanceof PerspectiveCamera ? camera.getEffectiveFOV() : 37,
@@ -89,20 +105,26 @@ export function CameraController() {
         x: position.x,
         y: position.y,
         z: position.z,
-        duration: reduced ? 0 : 0.75,
+        duration: reduced || resizingPlacement ? 0 : 0.75,
         ease: 'power3.inOut',
       },
       0,
     ).to(
       control.target,
-      { x: target.x, y: target.y, z: target.z, duration: reduced ? 0 : 0.75, ease: 'power3.inOut' },
+      {
+        x: target.x,
+        y: target.y,
+        z: target.z,
+        duration: reduced || resizingPlacement ? 0 : 0.75,
+        ease: 'power3.inOut',
+      },
       0,
     );
     return () => {
       t.kill();
       control.enabled = !useStore.getState().componentDrag;
     };
-  }, [request, camera, scene, reduced, size.width, size.height]);
+  }, [request, camera, scene, reduced, size.width, size.height, placing]);
   const gl = useThree((s) => s.gl);
   useEffect(() => {
     const interrupt = () => {

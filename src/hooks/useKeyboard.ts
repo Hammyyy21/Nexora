@@ -1,3 +1,4 @@
+import { saveWorkspaceWithPlan } from '../ai/planner/state';
 import { useLibraryStore } from '../catalog/store';
 import { useEffect } from 'react';
 import { useWorkspaceStore } from '../store/useWorkspaceStore';
@@ -25,7 +26,7 @@ export function useKeyboard() {
           else s.undo();
         } else if (key === 's') {
           e.preventDefault();
-          s.save();
+          saveWorkspaceWithPlan();
         }
         return;
       }

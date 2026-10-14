@@ -1,3 +1,4 @@
+import { parseBuildPlan } from '../ai/planner/schema';
 import { migrateProject } from '../workspace/migrations';
 import { validFootprint } from '../workspace/boardGeometry';
 import { validPosition } from './transforms';
@@ -44,6 +45,7 @@ export function parseProject(text: string): Project {
       (p.id !== demoProject.id || p.components.length !== demoProject.components.length))
   )
     throw new Error('Invalid Nexora project (schema version 1, 2 or 3).');
+  if (p.buildPlan !== undefined) p.buildPlan = parseBuildPlan(p.buildPlan);
   if (p.placementMode !== undefined && !['free', 'board'].includes(p.placementMode))
     throw new Error('Unsupported placement mode.');
   if (

@@ -177,7 +177,6 @@ export function DesignDrawer() {
                 }
                 onClick={() => {
                   if (s.beginPlacement(spec.id)) {
-                    layout.setPanel('workspace');
                     close();
                   }
                 }}
@@ -274,7 +273,6 @@ export function DesignDrawer() {
                 disabled={!part.insertionSupported || s.currentProject.components.length >= 64}
                 onClick={() => {
                   if (s.beginPlacement(part.id)) {
-                    layout.setPanel('workspace');
                     close();
                   }
                 }}

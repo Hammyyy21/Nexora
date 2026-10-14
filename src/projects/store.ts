@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { restoreMemory, redactSecrets, type MentorMemory } from '../ai/memory';
 import { useWorkspaceStore } from '../store/useWorkspaceStore';
 import { demoSource } from '../firmware/model';
 import { useFirmwareStore } from '../firmware/store';
@@ -13,8 +14,17 @@ interface Archive {
   activeId: string;
   projects: Project[];
   chats: Record<string, AssistantMessage[]>;
+  mentors?: Record<string, MentorMemory>;
 }
-function loadArchive(): Archive {
+function archiveMessage(message: AssistantMessage): AssistantMessage {
+  const text = redactSecrets(message.text);
+  const marker = '[Earlier message text omitted]\n';
+  return {
+    ...message,
+    text: text.length <= 10000 ? text : marker + text.slice(-(10000 - marker.length)),
+  };
+}
+export function loadArchive(): Archive {
   try {
     const raw = localStorage.getItem(PROJECTS_KEY);
     if (raw) {
@@ -45,12 +55,21 @@ function loadArchive(): Archive {
                   m &&
                   (m.role === 'user' || m.role === 'assistant') &&
                   typeof m.text === 'string' &&
-                  m.text.length <= 5000 &&
                   Number.isFinite(m.id),
-              );
+              )
+              .map(archiveMessage);
         }
       }
-      return { version: 2, activeId: data.activeId, projects, chats };
+      const mentors = Object.fromEntries(
+        projects.map((p: Project) => [
+          p.id,
+          restoreMemory(
+            data.mentors?.[p.id] ??
+              (p.buildPlan ? { intent: p.buildPlan.goal, plan: p.buildPlan } : undefined),
+          ),
+        ]),
+      );
+      return { version: 2, activeId: data.activeId, projects, chats, mentors };
     }
     const previous = localStorage.getItem(STORAGE_KEY);
     if (previous) {
@@ -99,6 +118,7 @@ interface ProjectsState extends Archive {
   remove: (id: string) => void;
   importNew: (project: Project) => void;
   saveActive: () => void;
+  setMentor: (id: string, memory: MentorMemory) => void;
 }
 function write(archive: Archive) {
   // Always validate before writing, and avoid damaging another project on quota errors.
@@ -110,6 +130,10 @@ function write(archive: Archive) {
 export const useProjectsStore = create<ProjectsState>((set, get) => {
   const commit = (archive: Archive) => {
     if (get().error && loadError) throw new Error(get().error!);
+    archive.mentors ??= get().mentors ?? {};
+    archive.mentors = Object.fromEntries(
+      archive.projects.map((p) => [p.id, restoreMemory(archive.mentors?.[p.id])]),
+    );
     write(archive);
     set({ ...archive, error: null });
   };
@@ -122,17 +146,35 @@ export const useProjectsStore = create<ProjectsState>((set, get) => {
     const projects = s.projects.map((p) => (p.id === s.activeId ? current() : p));
     const chats = {
       ...s.chats,
-      [s.activeId]: useWorkspaceStore.getState().demoAssistantMessages.slice(-20),
+      [s.activeId]: useWorkspaceStore
+        .getState()
+        .demoAssistantMessages.slice(-20)
+        .map(archiveMessage),
     };
     commit({ version: 2, projects, activeId: s.activeId, chats });
   };
   const activate = (p: Project) => {
-    useWorkspaceStore.getState().activateProject(p, get().chats[p.id] ?? []);
+    const hardware = cloneProject(p);
+    delete hardware.buildPlan;
+    useWorkspaceStore.getState().activateProject(hardware, get().chats[p.id] ?? []);
     useFirmwareStore.getState().setTab('c');
     set({ dashboardOpen: false });
   };
   return {
     ...initial,
+    setMentor: (id, memory) => {
+      const registered = get().projects.some((p) => p.id === id);
+      if (!registered && useWorkspaceStore.getState().currentProject.id !== id) return;
+      // Retain the session state even if browser storage is unavailable.
+      set({ mentors: { ...get().mentors, [id]: restoreMemory(memory) } });
+      if (registered) {
+        try {
+          flush();
+        } catch (e) {
+          set({ error: (e as Error).message });
+        }
+      }
+    },
     error: loadError,
     dashboardOpen: showFirstRun,
     setDashboardOpen: (dashboardOpen) => set({ dashboardOpen }),
@@ -195,7 +237,6 @@ export const useProjectsStore = create<ProjectsState>((set, get) => {
         if (!original) throw new Error('Project not found.');
         const copy = {
           ...cloneProject(original),
-          schemaVersion: 2 as const,
           id: crypto.randomUUID(),
           name: `${original.name.slice(0, 90)} (Copy)`,
           selectedComponentId: null,
@@ -234,12 +275,20 @@ export const useProjectsStore = create<ProjectsState>((set, get) => {
         flush();
         const parsed = parseProject(JSON.stringify(project));
         if (get().projects.length >= 50) throw new Error('Maximum of 50 local projects reached.');
-        const added = { ...parsed, schemaVersion: 2 as const, id: crypto.randomUUID() };
+        const added = { ...parsed, id: crypto.randomUUID() };
         commit({
           version: 2,
           activeId: added.id,
           projects: [...get().projects, added],
           chats: get().chats,
+          mentors: {
+            ...get().mentors,
+            [added.id]: restoreMemory(
+              parsed.buildPlan
+                ? { intent: parsed.buildPlan.goal, plan: parsed.buildPlan }
+                : undefined,
+            ),
+          },
         });
         activate(added);
       } catch (e) {
@@ -287,6 +336,8 @@ export function hydrateActiveProject() {
     workspace.selectedComponentId !== (project.selectedComponentId ?? null) ||
     JSON.stringify(workspace.demoAssistantMessages) !== JSON.stringify(chats)
   ) {
-    workspace.activateProject(project, chats);
+    const hardware = cloneProject(project);
+    delete hardware.buildPlan;
+    workspace.activateProject(hardware, chats);
   }
 }

@@ -5,6 +5,8 @@ import { getPart } from '../catalog/catalog';
 import { logicalPorts, validateConnection } from '../schematic/model';
 import { canReplace } from '../catalog/compatibility';
 import { createInstance, placementOrigin } from '../catalog/instances';
+import { useLibraryStore } from '../catalog/store';
+import { suggestPlacements } from '../engineering/placement';
 import { create } from 'zustand';
 import {
   presetBoardConfiguration,
@@ -355,9 +357,13 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       set({ notice: part?.insertionNote ?? 'Unsupported catalog item.' });
       return false;
     }
-    useDesignLayout.getState().setPanel('workspace');
+    useLibraryStore.getState().navigate('design');
+    useDesignLayout.getState().openDrawer(null);
+    const preview = createInstance(part, 'preview');
+    const suggested = suggestPlacements(get().currentProject, preview)[0];
+    if (suggested) preview.position = suggested.position;
     set({
-      placement: createInstance(part, 'preview'),
+      placement: preview,
       activeViewMode: 'assembly',
       cameraView: 'fit',
       cameraRequest: get().cameraRequest + 1,
@@ -406,8 +412,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         inspectorOpen: true,
         undoHistory: [...s.undoHistory.slice(-49), cloneProject(s.currentProject)],
         redoHistory: [],
-        cameraView: 'focus',
-        cameraRequest: s.cameraRequest + 1,
         notice: 'Visual object added. No electrical connection was created.',
       };
     }),
@@ -672,7 +676,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     set((s) => ({
       demoAssistantMessages: [
         ...s.demoAssistantMessages.slice(-19),
-        { id: Date.now() + s.demoAssistantMessages.length, role, text },
+        { id: Math.max(Date.now(), (s.demoAssistantMessages.at(-1)?.id ?? 0) + 1), role, text },
       ],
     })),
 }));

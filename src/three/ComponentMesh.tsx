@@ -9,6 +9,8 @@ import { ComponentPackage } from './ComponentPackages';
 export function ComponentMesh({ component: c }: { component: HardwareComponent }) {
   const group = useRef<Group>(null);
   const mode = useStore((s) => s.activeViewMode);
+  const placing = useStore((s) => Boolean(s.placement));
+  const visible = placing && c.id === 'pcb' ? true : c.visible;
   const dragMode = useStore((s) => s.dragMode);
   const preview = useStore((s) => (s.componentDrag?.id === c.id ? s.componentDrag.position : null));
   const previousMode = useRef(mode);
@@ -60,14 +62,14 @@ export function ComponentMesh({ component: c }: { component: HardwareComponent }
     return () => tweens.forEach((t) => t.kill());
   }, [mode, c.opacity, c.type, c.visible, selected, reduced]);
   // Removing hidden geometry also removes its raycast targets and HTML labels.
-  if (!c.visible) return null;
+  if (!visible || (placing && c.type === 'housing')) return null;
   return (
     <group
       name={c.id}
       ref={group}
       position={c.position}
       rotation={c.rotation.map((v) => MathUtils.degToRad(v)) as [number, number, number]}
-      visible={c.visible}
+      visible={visible}
       onClick={(e) => {
         if (mode === 'xray' && c.type === 'housing') return;
         e.stopPropagation();

@@ -1,9 +1,12 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommandBar } from '../src/components/layout/CommandBar';
 import { askGuide, getGuideHealth, GuideError } from '../src/ai/client';
 import { guideContext, useGuideStore } from '../src/ai/store';
 import { useWorkspaceStore } from '../src/store/useWorkspaceStore';
+import { useProjectsStore } from '../src/projects/store';
+import { ChatMessage } from '../src/ai/ChatMessage';
+import { createProject } from '../src/projects/templates';
 import { useLibraryStore } from '../src/catalog/store';
 
 const answer = {
@@ -28,6 +31,7 @@ const answer = {
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status });
 let fetchMock: ReturnType<typeof vi.fn>;
 beforeEach(() => {
+  useProjectsStore.setState({ mentors: {} });
   fetchMock = vi.fn();
   vi.stubGlobal('fetch', fetchMock);
   useGuideStore.setState({
@@ -36,6 +40,7 @@ beforeEach(() => {
     busy: false,
     status: '',
     open: false,
+    failedRequest: null,
   });
   useWorkspaceStore.setState({
     demoAssistantMessages: [],
@@ -145,7 +150,7 @@ describe('AI Guide interface', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Send command' }));
     await screen.findByText(/The RP2040 is a microcontroller/);
     expect(screen.queryByText(/Missing data: Exact wiring unknown/)).not.toBeInTheDocument();
-    expect(screen.getByText(/Firmware source is not sent/)).toBeVisible();
+    expect(screen.getByText(/including redacted firmware source/)).toBeVisible();
     fireEvent.change(screen.getByLabelText('Guide mode'), { target: { value: 'demo' } });
     expect(screen.getByLabelText('Ask Demo Assistant')).toBeVisible();
   });
@@ -162,6 +167,8 @@ it('shows pending submission, blocks duplicate sends and recovers from a FastAPI
   render(<CommandBar />);
   fireEvent.change(screen.getByLabelText('Ask AI Guide'), { target: { value: 'Explain RAM' } });
   fireEvent.click(screen.getByRole('button', { name: 'Send command' }));
+  expect(screen.getByLabelText('Ask AI Guide')).toHaveValue('');
+  await waitFor(() => expect(screen.getByText('Explain RAM')).toBeVisible());
   await waitFor(() => expect(screen.getByText('Asking AI Guide…')).toBeVisible());
   expect(screen.getByLabelText('Guide mode')).toBeDisabled();
   expect(screen.getByRole('button', { name: 'Send command' })).toBeDisabled();
@@ -173,4 +180,109 @@ it('shows pending submission, blocks duplicate sends and recovers from a FastAPI
   expect(screen.getByLabelText('Guide mode')).toBeEnabled();
   fireEvent.change(screen.getByLabelText('Ask AI Guide'), { target: { value: 'Retry' } });
   expect(screen.getByRole('button', { name: 'Send command' })).toBeEnabled();
+});
+
+for (const method of ['click', 'enter'] as const) {
+  it(`clears immediately on ${method}, preserves a new draft through failure and retries without duplicate messages`, async () => {
+    useGuideStore.setState({ availability: 'ready', mode: 'ai' });
+    let finish!: (r: Response) => void;
+    fetchMock
+      .mockReturnValueOnce(
+        new Promise<Response>((resolve) => {
+          finish = resolve;
+        }),
+      )
+      .mockResolvedValueOnce(json(answer));
+    render(<CommandBar docked />);
+    const input = screen.getByLabelText('Ask AI Guide');
+    const text = '  Explain RAM:\n  ' + 'long message '.repeat(200);
+    fireEvent.change(input, { target: { value: text } });
+    if (method === 'click') fireEvent.click(screen.getByRole('button', { name: 'Send command' }));
+    else fireEvent.keyDown(input, { key: 'Enter' });
+    expect(input).toHaveValue('');
+    expect(useWorkspaceStore.getState().demoAssistantMessages.at(-1)?.text).toBe(text);
+    expect(useGuideStore.getState().busy).toBe(true);
+    fireEvent.submit(input.closest('form')!);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const sent = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sent.messages).toEqual([{ role: 'user', content: text }]);
+    fireEvent.change(input, { target: { value: 'My next question' } });
+    await act(async () => finish(json({ error: { code: 'UPSTREAM_TIMEOUT' } }, 504)));
+    expect(input).toHaveValue('My next question');
+    expect(screen.getByText(/UPSTREAM_TIMEOUT/)).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: 'Retry last message' }));
+    await screen.findByText(/The RP2040 is a microcontroller/);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(
+      useWorkspaceStore.getState().demoAssistantMessages.filter((m) => m.role === 'user'),
+    ).toHaveLength(1);
+    expect(input).toHaveValue('My next question');
+  });
+}
+it('renders Markdown, code and diagrams without executing HTML and disables message effects', () => {
+  const text =
+    '**Power**\n\n```c\nint main(void) { return 0; }\n```\n\n```mermaid\ngraph LR; A-->B\n```\n<script>alert(1)</script>';
+  const { container } = render(
+    <ChatMessage message={{ id: 9001, role: 'assistant', text }} reducedMotion />,
+  );
+  expect(screen.getByText('Power').tagName).toBe('STRONG');
+  expect(container.querySelector('code.language-c')).toHaveTextContent('int main');
+  expect(container.querySelector('code.language-mermaid')).toHaveTextContent('A-->B');
+  expect(container.querySelector('script')).toBeNull();
+  expect(container.querySelector('article')).toHaveAttribute('data-animate', 'false');
+});
+it('does not scroll a reader away from older messages on a response', async () => {
+  useGuideStore.setState({ availability: 'ready', mode: 'ai' });
+  let finish!: (r: Response) => void;
+  fetchMock.mockReturnValue(
+    new Promise<Response>((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const { container } = render(<CommandBar docked />);
+  const scroller = container.querySelector('.response-messages')!;
+  Object.defineProperties(scroller, {
+    scrollHeight: { value: 2000 },
+    clientHeight: { value: 300 },
+  });
+  scroller.scrollTop = 200;
+  fireEvent.scroll(scroller);
+  fireEvent.change(screen.getByLabelText('Ask AI Guide'), { target: { value: 'Explain RAM' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Send command' }));
+  await act(async () => finish(json(answer)));
+  expect(scroller.scrollTop).toBe(200);
+});
+it('keeps cleared input and independent drafts when a request finishes after project switching', async () => {
+  useGuideStore.setState({ availability: 'ready', mode: 'ai' });
+  let finish!: (r: Response) => void;
+  fetchMock.mockReturnValue(
+    new Promise<Response>((resolve) => {
+      finish = resolve;
+    }),
+  );
+  render(<CommandBar docked />);
+  fireEvent.change(screen.getByLabelText('Ask AI Guide'), { target: { value: 'Explain RAM' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Send command' }));
+  const other = createProject('Independent project', 'blank');
+  act(() => useWorkspaceStore.getState().activateProject(other));
+  fireEvent.change(screen.getByLabelText('Ask AI Guide'), {
+    target: { value: 'Independent draft' },
+  });
+  await act(async () => finish(json(answer)));
+  expect(screen.getByLabelText('Ask AI Guide')).toHaveValue('Independent draft');
+  expect(screen.queryByText(/The RP2040 is a microcontroller/)).not.toBeInTheDocument();
+  expect(useGuideStore.getState().pending).toBeNull();
+});
+
+it('never turns an online retry into a local command after configuration failure', async () => {
+  useGuideStore.setState({ availability: 'ready', mode: 'ai' });
+  fetchMock.mockResolvedValue(json({ error: { code: 'AI_NOT_CONFIGURED' } }, 503));
+  await useGuideStore.getState().ask('Show exploded view');
+  expect(useGuideStore.getState().mode).toBe('demo');
+  await useGuideStore.getState().retry();
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+  expect(useWorkspaceStore.getState().activeViewMode).toBe('assembly');
+  expect(
+    useWorkspaceStore.getState().demoAssistantMessages.filter((m) => m.role === 'user'),
+  ).toHaveLength(1);
 });

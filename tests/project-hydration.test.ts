@@ -50,3 +50,31 @@ describe('startup project hydration', () => {
     expect(useProjectsStore.getState().dashboardOpen).toBe(false);
   });
 });
+
+it('restores mentor goals, conversation, draft and explanation mode across a fresh app load', async () => {
+  const projects = await import('../src/projects/store');
+  const { useWorkspaceStore } = await import('../src/store/useWorkspaceStore');
+  const { useGuideStore } = await import('../src/ai/store');
+  const { emptyMemory, rememberUser } = await import('../src/ai/memory');
+  const id = useWorkspaceStore.getState().currentProject.id;
+  const memory = rememberUser(emptyMemory(), 'Measure distance to objects 1–2 meters away');
+  memory.draft = 'What should I do next?';
+  useWorkspaceStore.getState().addMessage('assistant', 'Will you use this indoors or outdoors?');
+  projects.useProjectsStore.getState().setMentor(id, memory);
+  useGuideStore.getState().setExplanationMode('engineer');
+  projects.useProjectsStore.getState().saveActive();
+  vi.resetModules();
+  const restored = await import('../src/projects/store');
+  const restoredGuide = await import('../src/ai/store');
+  const restoredWorkspace = await import('../src/store/useWorkspaceStore');
+  restored.hydrateActiveProject();
+  expect(restoredGuide.useGuideStore.getState().explanationMode).toBe('engineer');
+  expect(restoredGuide.guideContext().project_intent?.intended_function).toBe(
+    'object-distance measurement',
+  );
+  expect(restored.useProjectsStore.getState().mentors?.[id].draft).toBe('What should I do next?');
+  expect(
+    restoredWorkspace.useWorkspaceStore.getState().demoAssistantMessages.at(-1)?.text,
+  ).toContain('indoors or outdoors');
+  restored.flushProjects();
+});

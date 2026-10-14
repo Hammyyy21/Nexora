@@ -64,8 +64,9 @@ describe('visual placement and replacement', () => {
     expect(workspace.getState().replaceComponent('mcu', 'tmp102')).toBe(false);
     expect(workspace.getState().replaceComponent('pcb', 'pico')).toBe(false);
     workspace.getState().beginPlacement('rp2040');
+    const proposed = workspace.getState().placement!.position;
     workspace.getState().movePlacement([Infinity, 0, 0]);
-    expect(workspace.getState().placement?.position).toEqual([6, 1, 0]);
+    expect(workspace.getState().placement?.position).toEqual(proposed);
     workspace.getState().beginPlacement('ddr4-8');
     workspace.getState().confirmPlacement();
     const id = workspace.getState().selectedComponentId!;
@@ -209,6 +210,7 @@ describe('component library interface', () => {
   });
   it('confirms numeric placement and permits inspector transform reset on added parts', async () => {
     workspace.getState().beginPlacement('rp2040');
+    const [, y, z] = workspace.getState().placement!.position;
     const user = userEvent.setup();
     const view = render(<PlacementControls />);
     fireEvent.change(screen.getByRole('spinbutton', { name: 'Placement position X' }), {
@@ -219,7 +221,7 @@ describe('component library interface', () => {
     render(<InspectorPanel />);
     await user.click(screen.getByText('Advanced · Transform & appearance'));
     await user.click(screen.getByRole('button', { name: 'Reset selected transform' }));
-    expect(workspace.getState().currentProject.components.at(-1)!.position).toEqual([9, 1, 0]);
+    expect(workspace.getState().currentProject.components.at(-1)!.position).toEqual([9, y, z]);
   });
 });
 describe('Demo Guide and navigation', () => {

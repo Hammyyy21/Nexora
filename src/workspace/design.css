@@ -522,14 +522,35 @@
   display: flex;
   font-size: 10px;
 }
+/* Placement shares space with the canvas instead of covering the board. */
+.placement-workspace { display: flex; flex: 1; min-width: 0; min-height: 0; container-type: inline-size; }
 .focused-workspace .placement-controls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  max-height: 45%;
-  overflow: auto;
-  z-index: 6;
+  position: relative; flex: 0 0 auto; min-height: 0; max-width: 45%;
+  padding: 12px; background: #142838; border-left: 1px solid #34526d;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.placement-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex-shrink: 0; }
+.placement-heading > strong { flex: 1 0 100%; }
+.placement-details { overflow: auto; min-height: 0; overscroll-behavior: contain; }
+.placement-details[hidden] { display: none; }
+.placement-details > span { color: #90b3c9; font-size: 10px; }
+.placement-controls .button { margin: 0; padding: 7px; }
+.placement-details > div:last-child { display: flex; flex-wrap: wrap; gap: 7px; }
+.placement-options { display: grid; }
+.placement-fields { gap: 10px; }
+.placement-fields input { width: 54px; }
+.placement-resizer { position: absolute; left: -5px; top: 0; bottom: 0; width: 10px; cursor: col-resize; touch-action: none; z-index: 7; }
+.placement-resizer:hover, .placement-resizer:focus-visible { background: #30d7e855; outline: 2px solid #30d7e8; }
+.focused-workspace .placement-controls.is-collapsed { padding: 8px 4px; }
+.placement-controls.is-collapsed .button { font-size: 9px; padding: 6px 2px; }
+@container (max-width: 620px) {
+  .focused-workspace .placement-controls { width: 100% !important; max-width: none; max-height: 42%; border-left: 0; }
+  .placement-resizer { display: none; }
+  .placement-heading > strong { flex: 1; }
+  .focused-workspace .placement-controls.is-collapsed { max-height: 64px; }
+}
+@media (max-width: 620px) {
+  .placement-workspace { flex-direction: column; }
 }
 .is-focus-mode .viewport-title,
 .is-focus-mode .viewport-bottom,
@@ -621,3 +642,4 @@
     top: 44px;
   }
 }
+.placement-options button[aria-pressed='true'] { border-color: #94e3c2; background: #25554b; }

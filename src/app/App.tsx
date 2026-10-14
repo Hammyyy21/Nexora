@@ -67,16 +67,18 @@ export default function App() {
             aria-label="3D design workspace"
           >
             <ViewModeSelector />
-            <div
-              className="viewport"
-              ref={viewport}
-              tabIndex={0}
-              aria-label="3D workspace camera controls"
-            >
-              <HardwareScene />
-              <ViewportOverlay />
+            <div className="placement-workspace">
+              <div
+                className="viewport"
+                ref={viewport}
+                tabIndex={0}
+                aria-label="3D workspace camera controls"
+              >
+                <HardwareScene />
+                <ViewportOverlay />
+                <PositionTransform />
+              </div>
               <PlacementControls />
-              <PositionTransform />
             </div>
           </main>
           {workspace === 'components' && (

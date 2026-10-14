@@ -1,3 +1,4 @@
+import { projectWithBuildPlan, saveWorkspaceWithPlan } from '../../ai/planner/state';
 import { useProjectsStore } from '../../projects/store';
 import { useLibraryStore } from '../../catalog/store';
 import { useDesignLayout } from '../../workspace/layout';
@@ -76,7 +77,7 @@ export function TopBar() {
           <SlidersHorizontal size={16} />
         </IconButton>
         <div className="save-group">
-          <button className="button primary small" onClick={s.save}>
+          <button className="button primary small" onClick={saveWorkspaceWithPlan}>
             <Save size={14} />
             <span>Save project</span>
           </button>
@@ -101,10 +102,7 @@ export function TopBar() {
               <button
                 onClick={() => {
                   downloadFile(
-                    serializeProject({
-                      ...s.currentProject,
-                      selectedComponentId: s.selectedComponentId,
-                    }),
+                    serializeProject(projectWithBuildPlan()),
                     'nexora-project.json',
                     'application/json',
                   );
@@ -140,7 +138,7 @@ export function TopBar() {
               try {
                 if (file.size > 250000)
                   throw new Error('Project file is too large (250 KB maximum).');
-                s.importProject(parseProject(await file.text()));
+                projects.importNew(parseProject(await file.text()));
               } catch (error) {
                 s.notify((error as Error).message);
               }
@@ -160,7 +158,15 @@ export function WorkspaceHeader() {
       <div className="breadcrumb">
         <span>Workspace</span>
         <span className="slash">/</span>
-        <strong>{workspace === 'components' ? 'Hardware library' : workspace === 'schematic' ? '2D schematic' : workspace === 'pcb' ? 'PCB layout' : '3D design'}</strong>
+        <strong>
+          {workspace === 'components'
+            ? 'Hardware library'
+            : workspace === 'schematic'
+              ? '2D schematic'
+              : workspace === 'pcb'
+                ? 'PCB layout'
+                : '3D design'}
+        </strong>
       </div>
       <nav
         className="main-navigation"
@@ -171,27 +177,42 @@ export function WorkspaceHeader() {
           const index = buttons.indexOf(event.target as HTMLButtonElement);
           if (index < 0) return;
           event.preventDefault();
-          const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1
-            : Math.max(0, Math.min(buttons.length - 1, index + (event.key === 'ArrowRight' ? 1 : -1)));
+          const next =
+            event.key === 'Home'
+              ? 0
+              : event.key === 'End'
+                ? buttons.length - 1
+                : Math.max(
+                    0,
+                    Math.min(buttons.length - 1, index + (event.key === 'ArrowRight' ? 1 : -1)),
+                  );
           buttons[next].focus();
           buttons[next].click();
           buttons[next].scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
         }}
       >
-        {([
-          ['design', 'Design', 'explorer'],
-          ['pcb', 'PCB Layout', null],
-          ['schematic', 'Schematic', null],
-          ['inspector', 'Inspector', 'inspector'],
-          ['workspace', 'Workspace', 'workspace'],
-          ['code', 'Code', 'code'],
-          ['components', 'Components', null],
-          ['ai', 'AI Guide', 'ai'],
-        ] as const).map(([view, label, panel]) => {
-          const active = (view === 'components' || view === 'schematic' || view === 'pcb')
-            ? workspace === view
-            : workspace !== 'components' && workspace !== 'schematic' && layout.panel === panel;
-          const dockOpen = panel !== null && workspace !== 'components' && workspace !== 'schematic' && layout.panel === panel && !layout.collapsed;
+        {(
+          [
+            ['design', 'Design', 'explorer'],
+            ['pcb', 'PCB Layout', null],
+            ['schematic', 'Schematic', null],
+            ['inspector', 'Inspector', 'inspector'],
+            ['workspace', 'Workspace', 'workspace'],
+            ['code', 'Code', 'code'],
+            ['components', 'Components', null],
+            ['ai', 'AI Guide', 'ai'],
+          ] as const
+        ).map(([view, label, panel]) => {
+          const active =
+            view === 'components' || view === 'schematic' || view === 'pcb'
+              ? workspace === view
+              : workspace !== 'components' && workspace !== 'schematic' && layout.panel === panel;
+          const dockOpen =
+            panel !== null &&
+            workspace !== 'components' &&
+            workspace !== 'schematic' &&
+            layout.panel === panel &&
+            !layout.collapsed;
           return (
             <button
               key={view}
@@ -203,7 +224,8 @@ export function WorkspaceHeader() {
                 if (view === 'design') {
                   navigateWorkspace('design');
                   openToolPanel('explorer');
-                } else if (view === 'components' || view === 'schematic' || view === 'pcb') navigateWorkspace(view);
+                } else if (view === 'components' || view === 'schematic' || view === 'pcb')
+                  navigateWorkspace(view);
                 else if (view === 'code') navigateWorkspace('code');
                 else openToolPanel(panel!);
               }}

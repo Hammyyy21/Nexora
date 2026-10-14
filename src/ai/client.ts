@@ -1,5 +1,12 @@
+import { boundedConversation, type ExplanationMode, type ProjectIntent } from './memory';
+import type { AssistantMessage } from '../types/workspace';
 import { parseAIAction, type AIAction } from './actions';
 export interface ChatContext {
+  build_plan?: import('./planner/schema').BuildPlan;
+  project_intent?: ProjectIntent;
+  context_omitted?: string[];
+  conversation_omitted?: { messages: number; characters: number };
+  component_roles?: { id: string; role: string }[];
   workspace_snapshot?: import('./snapshot').WorkspaceSnapshot;
   board_summary?: string;
   connections?: import('../types/workspace').SchematicConnection[];
@@ -108,14 +115,84 @@ export async function askGuide(
   message: string,
   context: ChatContext,
   responseLength: ResponseLength = 'auto',
+  history: AssistantMessage[] = [],
+  explanationMode: ExplanationMode = 'beginner',
 ): Promise<GuideResponse> {
-  const data = await request('/api/ai/chat', {
-    messages: [{ role: 'user', content: message }],
-    context,
+  const conversation = boundedConversation(history, message);
+  const payload = {
+    messages: conversation.messages,
+    explanation_mode: explanationMode,
+    context: {
+      ...structuredClone(context),
+      conversation_omitted: {
+        messages:
+          conversation.omitted_messages +
+          Math.max(0, (context.project_intent?.total_messages ?? history.length) - history.length),
+        characters: conversation.omitted_characters,
+      },
+    },
     response_length: responseLength,
-  });
+  };
+  // Include UTF-8 bytes, not just character counts, in the gateway body budget.
+  const maxBytes = context.workspace_snapshot ? 190000 : 19000;
+  while (new TextEncoder().encode(JSON.stringify(payload)).length > maxBytes) {
+    const c = payload.context;
+    const omit = (name: string) => {
+      c.context_omitted = [...new Set([...(c.context_omitted ?? []), name])];
+    };
+    if (c.build_plan) {
+      delete c.build_plan;
+      omit('build_plan; consult goal and workspace evidence');
+    } else if (c.component_roles?.length) {
+      c.component_roles = [];
+      omit('component_roles');
+    } else if (c.board_summary) {
+      delete c.board_summary;
+      omit('board_summary');
+    } else if (c.project_components?.length && c.workspace_snapshot) {
+      c.project_components = [];
+      omit('duplicate project_components; use snapshot');
+    } else if (c.connections?.length && c.workspace_snapshot) {
+      c.connections = [];
+      omit('duplicate connections; use snapshot');
+    } else {
+      const intent = c.project_intent;
+      const list =
+        intent &&
+        [intent.requirements, intent.decisions, intent.corrections, intent.unknowns].find(
+          (items) => items.length > 2,
+        );
+      if (intent && list) {
+        list.splice(1, 1);
+        intent.omitted_entries++;
+      } else if (intent?.proposed_next_steps) {
+        intent.proposed_next_steps = '';
+        intent.omitted_entries++;
+      } else if (payload.messages.length > 1) {
+        const removed = payload.messages.shift()!;
+        c.conversation_omitted.messages++;
+        c.conversation_omitted.characters += removed.content.length;
+      } else
+        throw new GuideError(
+          'REQUEST_TOO_LARGE',
+          'The project context exceeds the request budget. Your question has been kept.',
+        );
+    }
+  }
+  const data = await request('/api/ai/chat', payload);
   if (
-    (data.findings !== undefined && (!Array.isArray(data.findings) || data.findings.length > 32 || data.findings.some((f: { evidence_id?: unknown; explanation?: unknown; next_step?: unknown }) => !f || typeof f.evidence_id !== 'string' || typeof f.explanation !== 'string' || typeof f.next_step !== 'string' || f.explanation.length > 2000 || f.next_step.length > 1000))) ||
+    (data.findings !== undefined &&
+      (!Array.isArray(data.findings) ||
+        data.findings.length > 32 ||
+        data.findings.some(
+          (f: { evidence_id?: unknown; explanation?: unknown; next_step?: unknown }) =>
+            !f ||
+            typeof f.evidence_id !== 'string' ||
+            typeof f.explanation !== 'string' ||
+            typeof f.next_step !== 'string' ||
+            f.explanation.length > 2000 ||
+            f.next_step.length > 1000,
+        ))) ||
     data?.mode !== 'ai' ||
     typeof data.answer !== 'string' ||
     typeof data.notice !== 'string' ||

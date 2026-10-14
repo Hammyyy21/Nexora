@@ -6,7 +6,7 @@ import { useDesignLayout, type DesignPanel } from '../workspace/layout';
 export function navigateWorkspace(workspace: 'design' | 'pcb' | 'schematic' | 'components' | 'code') {
   useDesignLayout.getState().openDrawer(null);
   useLibraryStore.getState().navigate(workspace);
-  if (workspace === 'components' && useDesignLayout.getState().compact)
+  if (['components', 'pcb', 'schematic'].includes(workspace) && useDesignLayout.getState().compact)
     useDesignLayout.getState().setCollapsed(true);
   if (workspace === 'code') {
     useFirmwareStore.getState().setOpen(true);

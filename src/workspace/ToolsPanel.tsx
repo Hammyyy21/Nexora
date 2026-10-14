@@ -11,6 +11,7 @@ import { navigateWorkspace, openToolPanel } from '../catalog/navigation';
 
 export function ToolsPanel({ onScreenshot }: { onScreenshot: () => void }) {
   const layout = useDesignLayout();
+  const placing = useWorkspaceStore((s) => Boolean(s.placement));
   const selected = useWorkspaceStore((s) =>
     s.currentProject.components.find((c) => c.id === s.selectedComponentId),
   );
@@ -34,14 +35,14 @@ export function ToolsPanel({ onScreenshot }: { onScreenshot: () => void }) {
   };
   return (
     <>
-      {layout.compact && !layout.collapsed && (
+      {layout.compact && !layout.collapsed && !placing && (
         <button className="tools-backdrop" aria-label="Close tools drawer" onClick={collapse} />
       )}
       <aside
         ref={panel}
         id="workspace-tools-panel"
         aria-label="Workspace tools panel"
-        hidden={layout.collapsed}
+        hidden={layout.collapsed || placing}
         className={`tools-panel ${layout.expanded ? 'is-expanded' : ''} ${resizing ? 'is-resizing' : ''}`}
         style={{ width: layout.expanded ? undefined : layout.width }}
         onPointerDown={(e) => e.stopPropagation()}
