@@ -9,6 +9,8 @@
 
 # Nexora
 
+> **Architecture at a glance:** [System diagram, tech stack, and core features](docs/architecture-overview.md).
+
 A browser-local, interactive 3D hardware design studio. The bundled **Smart Cooling Controller** includes a procedural PCB, 14 selectable objects, editable properties, four viewing modes, a deterministic Demo Assistant, an integrated Firmware Explorer, and a Components workspace with 29 curated hardware records.
 
 ## Run locally
